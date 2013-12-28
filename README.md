@@ -140,25 +140,31 @@ For example, `"ims"` means `Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Patte
 
 ### Avoid Backslash-Hell
 
+`rexp()` convers backquote into backslash in order to avoid backslash-hell.
+
 	import static benry.rexp.Rexp.rexp;
 	import benry.rexp.Matched;
 	
 	public class Example {
 	    public static void main(String args[]) {
 	
-	        // use backquote instead of backslash
+	        // use backquote ("`") instead of backslash ("\\")
 	        Matched m1 = rexp("^(`d`d)/(`d`d)$").match("12/31");
 	        System.out.println(m1.get(1));    //=> 12
 	        System.out.println(m1.get(2));    //=> 31
 	
+	        // use double-backqotes ('``') to represent single-backquote ('`')
+	        Matched m2 = rexp("^``$").match("`");
+	        System.out.println(m2.get(0));    //=> `
+	
 	        // use arbitrary character instead of backslash
-	        Matched m2 = rexp("^(%d%d)/(%d%d)$", '%').match("12/31");
-	        System.out.println(m2.get(1));    //=> 12
-	        System.out.println(m2.get(2));    //=> 31
+	        Matched m3 = rexp("^(%d%d)/(%d%d)$", '%').match("12/31");
+	        System.out.println(m3.get(1));    //=> 12
+	        System.out.println(m3.get(2));    //=> 31
 	
 	        // disable backquote
-	        Matched m3 = rexp("^(`d`d)/(`d`d)$", '\0').match("12/31");
-	        System.out.println(m3);           //=> null
+	        Matched m4 = rexp("^(`d`d)/(`d`d)$", '\0').match("12/31");
+	        System.out.println(m4);           //=> null
 	
 	    }
 	}
