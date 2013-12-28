@@ -76,4 +76,14 @@ public class RexpExamplesTest {
         assertThat(m, is(MatchedIterator.class));
     }
 
+    @Test
+    public void rexp__escapes_doubled_backqoutes_into_a_backquote() {
+        assertThat(rexp("``"    ).getPattern().toString(), is("`"));
+        assertThat(rexp("xx"    ).getPattern().toString(), is("xx"));
+        assertThat(rexp("x`dd``").getPattern().toString(), is("x\\dd`"));
+        assertThat(rexp("`.`d"  ).getPattern().toString(), is("\\.\\d"));
+        assertThat(rexp("`.``"  ).getPattern().toString(), is("\\.`"));
+        assertThat(rexp("`.````").getPattern().toString(), is("\\.``"));
+    }
+
 }
