@@ -26,7 +26,8 @@ public class Rexp {
 
     public Rexp(String pattern, String flags, char escapeChar) {
         if (escapeChar != '\0') {
-            pattern = pattern.replace(escapeChar, '\\');
+            //pattern = pattern.replace(escapeChar, '\\');
+            pattern = escapePatternString(pattern, escapeChar);
         }
         _pattern = Pattern.compile(pattern, toIntFlag(flags));
     }
@@ -101,6 +102,41 @@ public class Rexp {
             }
         }
         return intflag;
+    }
+
+    static String escapePatternString(String str, char escChar) {
+        char c = '\0';
+        int i, len;
+        StringBuilder buf = null;
+        for (i = 0, len = str.length(); i < len; i++) {
+            c = str.charAt(i);
+            if (c == escChar) {
+                buf = new StringBuilder();
+                if (i > 0) buf.append(str.substring(0, i));
+                break;
+            }
+        }
+        if (buf == null) {
+            return str;
+        }
+        boolean isPrevEscChar = true;
+        for (i++; i < len; i++) {
+            c = str.charAt(i);
+            if (c != escChar) {
+                if (isPrevEscChar) buf.append('\\');
+                buf.append(c);
+                isPrevEscChar = false;
+            }
+            else if (isPrevEscChar) {
+                buf.append(escChar);
+                isPrevEscChar = false;
+            }
+            else {
+                isPrevEscChar = true;
+            }
+        }
+        if (isPrevEscChar) buf.append('\\');
+        return buf.toString();
     }
 
     static HashMap<Object, Rexp> _cache = new HashMap<Object, Rexp>();
