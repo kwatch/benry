@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="benry" default="build">
+
+  <property name="src.main"   location="./src/main/java" />
+  <property name="src.test"   location="./src/test/java" />
+  <property name="clsdir"     location="./classes" />
+  <property name="libdir"     location="./lib" />
+
+  <target name="compile">
+    <delete dir="${clsdir}" />
+    <mkdir dir="${clsdir}" />
+    <javac srcdir="${src.main}" destdir="${clsdir}" encoding="UTF-8" includeantruntime="false">
+    </javac>
+  </target>
+
+  <target name="build" depends="compile">
+    <mkdir dir="${libdir}" />
+    <jar destfile="${libdir}/benry.jar">
+      <fileset dir="${clsdir}" />
+    </jar>
+  </target>
+
+</project>
