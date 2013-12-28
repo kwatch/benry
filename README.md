@@ -6,7 +6,7 @@ Useful tools for java.
 $License: MIT License $
 
 
-## Package: bency.rexp
+## Package: benry.rexp
 
 Useful wrapper over `java.util.regex` package.
 
