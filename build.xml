@@ -15,7 +15,7 @@
 
   <target name="build" depends="compile">
     <mkdir dir="${libdir}" />
-    <jar destfile="${libdir}/benry.jar">
+    <jar destfile="${libdir}/benry-rexp.jar">
       <fileset dir="${clsdir}" />
     </jar>
   </target>
