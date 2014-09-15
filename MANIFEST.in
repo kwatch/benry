@@ -1,0 +1,4 @@
+include README.rst MIT-LICENSE CHANGES.txt setup.py MANIFEST.in
+recursive-include benry *.py
+include tests/*.py
+include Kookbook.py
