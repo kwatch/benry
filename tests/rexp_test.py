@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import with_statement
 
 import sys, re
 python2 = sys.version_info[0] == 2

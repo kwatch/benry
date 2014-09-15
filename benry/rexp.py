@@ -29,10 +29,10 @@ def rx(pattern, flags=0):
     """Almost same as re.compile()."""
     #; [!jaijg] returns compiled regexp object.
     #; [!w7i3y] caches compiled regexp object.
-    #key = (pattern, flags)
-    key = pattern if flags == 0 else (pattern, flags)
-    compiled = _cache.get(key)
-    if compiled is None:
+    key = (pattern, flags) if flags else pattern
+    try:
+        return _cache[key]
+    except KeyError:
         _cache[key] = compiled = compile(pattern, flags)
     return compiled
 
