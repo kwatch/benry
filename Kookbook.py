@@ -71,6 +71,8 @@ class pkg(Category):
     @recipe
     def dist(c, *args, **kwargs):
         """create %s-X.X.X/ directory""" % package
+        if release == '0.0.0':
+            raise ValueError("release number should be specified")
         ## create dir
         dir = "dist/" + basename
         if os.path.isdir(dir):
