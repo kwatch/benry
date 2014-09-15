@@ -153,3 +153,20 @@ class matching(object):
 rx.compile = compile
 rx.type    = type(_compile('x'))
 rx.matching = matching
+
+
+#; [!ijpox] has same options with re module.
+import re
+rx.I = re.I
+rx.L = re.L
+rx.M = re.M
+rx.S = re.S
+rx.U = re.U
+rx.X = re.X
+rx.IGNORECASE = re.IGNORECASE
+rx.LOCALE     = re.LOCALE
+rx.MULTILINE  = re.MULTILINE
+rx.DOTALL     = re.DOTALL
+rx.UNICODE    = re.UNICODE
+rx.VERBOSE    = re.VERBOSE
+del re

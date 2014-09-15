@@ -215,6 +215,23 @@ class rexp_TC(unittest.TestCase):
             ok (m.span(1)) == m.matched.span(1)
 
 
+    @test("[!ijpox] has same options with re module.")
+    def _(self):
+        ok (rexp.rx.I) == re.I
+        ok (rexp.rx.L) == re.L
+        ok (rexp.rx.M) == re.M
+        ok (rexp.rx.S) == re.S
+        ok (rexp.rx.U) == re.U
+        ok (rexp.rx.X) == re.X
+        #
+        ok (rexp.rx.IGNORECASE) == re.IGNORECASE
+        ok (rexp.rx.LOCALE    ) == re.LOCALE
+        ok (rexp.rx.MULTILINE ) == re.MULTILINE
+        ok (rexp.rx.DOTALL    ) == re.DOTALL
+        ok (rexp.rx.UNICODE   ) == re.UNICODE
+        ok (rexp.rx.VERBOSE   ) == re.VERBOSE
+
+
 
 if __name__ == '__main__':
     import oktest
