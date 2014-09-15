@@ -58,17 +58,17 @@ class rexp_TC(unittest.TestCase):
             rx = rexp.rx
             ok (rx.compile).is_(rexp.compile)
             ok (rx.type).is_(re_pattern_type)
-            ok (rx.Matcher).is_(rexp.Matcher)
+            ok (rx.matching).is_(rexp.matching)
 
 
-    with subject('Matcher'):
+    with subject('matching'):
 
 
         with subject('#__init__()'):
 
             @test("[!5894d] takes a string.")
             def _(self):
-                m = rexp.Matcher("homhom")
+                m = rexp.matching("homhom")
                 ok (m.string) == "homhom"
 
 
@@ -76,20 +76,20 @@ class rexp_TC(unittest.TestCase):
 
             @test("[!hisc0] calles re.compile().match() internally.")
             def _(self):
-                m = rexp.Matcher("abc123xyz")
+                m = rexp.matching("abc123xyz")
                 ok (m.match(r'\d+')) == None
                 ok (m.match(r'\w+')) != None
 
             @test("[!82wzs] returns matched object if matched.")
             def _(self):
-                m = rexp.Matcher("abc123xyz")
+                m = rexp.matching("abc123xyz")
                 ret = m.match(r'\w+')
                 ok (ret).is_a(re_match_type)
                 ok (m.matched).is_(ret)
 
             @test("[!1bghx] returns None if not matched.")
             def _(self):
-                m = rexp.Matcher("abc123xyz")
+                m = rexp.matching("abc123xyz")
                 ret = m.match(r'\d+')
                 ok (ret) == None
                 ok (m.matched) == None
@@ -99,19 +99,19 @@ class rexp_TC(unittest.TestCase):
 
             @test("[!1mlr4] calles re.compile().search() internally.")
             def _(self):
-                m = rexp.Matcher("abc123xyz")
+                m = rexp.matching("abc123xyz")
                 ok (m.search(r'\d+')) != None
 
             @test("[!sn5l4] returns matched object if matched.")
             def _(self):
-                m = rexp.Matcher("abc123xyz")
+                m = rexp.matching("abc123xyz")
                 ret = m.search(r'\d+')
                 ok (ret).is_a(re_match_type)
                 ok (m.matched).is_(ret)
 
             @test("[!9bx11] returns None if not matched.")
             def _(self):
-                m = rexp.Matcher("abc123xyz")
+                m = rexp.matching("abc123xyz")
                 ret = m.search(r'[A-Z]+')
                 ok (ret) == None
                 ok (m.matched) == None
@@ -121,7 +121,7 @@ class rexp_TC(unittest.TestCase):
 
             @test("[!uvlc2] returns True when matched.")
             def _(self):
-                m = rexp.Matcher("abc123xyz")
+                m = rexp.matching("abc123xyz")
                 m.match(r'\w+')
                 ok (m.__nonzero__()) == True
                 if python2:
@@ -129,7 +129,7 @@ class rexp_TC(unittest.TestCase):
 
             @test("[!qzuo3] returns False when not matched.")
             def _(self):
-                m = rexp.Matcher("abc123xyz")
+                m = rexp.matching("abc123xyz")
                 m.match(r'\d+')
                 ok (m.__nonzero__()) == False
                 if python3:
@@ -140,7 +140,7 @@ class rexp_TC(unittest.TestCase):
 
             @test("[!8i8w2] returns True when matched.")
             def _(self):
-                m = rexp.Matcher("abc123xyz")
+                m = rexp.matching("abc123xyz")
                 m.match(r'\w+')
                 ok (m.__bool__()) == True
                 if python3:
@@ -148,7 +148,7 @@ class rexp_TC(unittest.TestCase):
 
             @test("[!9vzm9] returns False when not matched.")
             def _(self):
-                m = rexp.Matcher("abc123xyz")
+                m = rexp.matching("abc123xyz")
                 m.match(r'\d+')
                 ok (m.__bool__()) == False
                 if python3:
@@ -159,7 +159,7 @@ class rexp_TC(unittest.TestCase):
 
             @test("[!n6u01] returns iterator of each group.")
             def _(self):
-                m = rexp.Matcher("2010-12-31")
+                m = rexp.matching("2010-12-31")
                 m.match(r'^(\d\d\d\d)-(\d\d)-(\d\d)$')
                 ok (list(m.__iter__())) == ["2010", "12", "31"]
                 Y, M, D = m
@@ -172,7 +172,7 @@ class rexp_TC(unittest.TestCase):
 
             @test("[!jjo8m] returns groupdict[key] when key is a string.")
             def _(self):
-                m = rexp.Matcher("2010-12-31")
+                m = rexp.matching("2010-12-31")
                 m.match(r'^(?P<year>\d\d\d\d)-(?P<month>\d\d)-(?P<day>\d\d)$')
                 ok (m['year'])  == "2010"
                 ok (m['month']) == "12"
@@ -180,7 +180,7 @@ class rexp_TC(unittest.TestCase):
 
             @test("[!ijvmx] returns group(key) when key is an integer.")
             def _(self):
-                m = rexp.Matcher("2010-12-31")
+                m = rexp.matching("2010-12-31")
                 m.match(r'^(\d\d\d\d)-(\d\d)-(\d\d)$')
                 ok (m[1]) == "2010"
                 ok (m[2]) == "12"
@@ -188,7 +188,7 @@ class rexp_TC(unittest.TestCase):
 
         @test("#; [!55jnx] has methods and properties same as SRE_Match object.")
         def _(self):
-            m = rexp.Matcher("abc123xyz(?P<ext>\.\w+)$")
+            m = rexp.matching("abc123xyz(?P<ext>\.\w+)$")
             m.match(r'.*(\d+)')
             #
             ok (m.end()) == m.matched.end()

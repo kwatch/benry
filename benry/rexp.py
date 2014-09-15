@@ -7,7 +7,7 @@
 ###
 
 
-__all__ = ('rx', 'compile', 'Matcher',)
+__all__ = ('rx', 'compile', 'matching',)
 
 
 import sys
@@ -37,20 +37,20 @@ def rx(pattern, flags=0):
     return compiled
 
 
-class Matcher(object):
+class matching(object):
     """
     ex:
        from rexp import rx
-       from datetime import date
-       m = rx.Matcher("12/31/2014")
+       m = rx.matching("12/31/2014")
        if m.match(r'^(\d\d\d\d)-(\d\d)-(\d\d)$'):
            Y, M, D = m.groups()   # or: Y, M, D = m
        elif m.match(r'^(\d\d)/(\d\d)/(\d\d\d\d)$'):
-           M, D, Y = m.groups()   # or: M, D, Y = m.groups()
+           M, D, Y = m.groups()   # or: M, D, Y = m
+       elif m.match(r'^(\d\d\d\d)/(\d\d)/(\d\d)$'):
+           Y, M, D = m.groups()   # or: M, D, Y = m
        else:
            Y = M = D = None
-       if Y is not None:
-           print("year: %s, month: %s, day: %s" % (int(Y), int(M), int(D)))
+       print("year: %s, month: %s, day: %s" % (Y, M, D))
     """
 
     def __init__(self, string):
@@ -152,4 +152,4 @@ class Matcher(object):
 #; [!mk6mq] has several shortcuts.
 rx.compile = compile
 rx.type    = type(_compile('x'))
-rx.Matcher = Matcher
+rx.matching = matching
