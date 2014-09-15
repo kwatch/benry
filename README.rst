@@ -125,16 +125,17 @@ class UTCDateTime
 ``UTCDdateTime`` is a subclass of ``datetime.datetime`` representing UTC offset. ::
 
     from benry.date_time import UTCDateTime
-    
+
+    print(UTCDateTime.offset_minutes)      #=> 0
+    print(UTCDateTime.offset_timedelta)    #=> timedelta(seconds=0)
+    print(UTCDateTime.is_utc)              #=> True
+    print(UTCDateTime.is_local)            #=> False
+
     ## almost same as datetime.utcnow(), except returning UTCDateTime object.
     utc_dt = UTCDateTime.now()
-    
-    print(utc_dt.offset_minutes)      #=> 0
-    print(utc_dt.offset_timedelta)    #=> timedelta(seconds=0)
-    print(utc_dt.is_utc)              #=> True
-    print(utc_dt.is_local)            #=> False
-    print(utc_dt.to_utc())            # returns self.
-    print(utc_dt.to_local())          # returns LocalDateTime object.
+
+    print(utc_dt.to_utc())                 # returns self.
+    print(utc_dt.to_local())               # returns LocalDateTime object.
 
 
 class LocalDateTime
@@ -144,13 +145,14 @@ class LocalDateTime
 This class calculates offset between local time and UTC time. ::
 
     from benry.date_time import LocalDateTime
-    
+
+    print(LocalDateTime.offset_minutes)    #=> 9*60  (ex: JST timezone)
+    print(LocalDateTime.offset_timedelta)  #=> timedelta(seconds=9*60*60)
+    print(LocalDateTime.is_utc)            #=> False
+    print(LocalDateTime.is_local)          #=> True
+
     ## almost same as datetime.now(), except returning LocalDateTime object.
     local_dt = LocalDateTime.now()
-    
-    print(local_dt.offset_minutes)      #=> 9*60  (ex: JST timezone)
-    print(local_dt.offset_timedelta)    #=> timedelta(seconds=9*60*60)
-    print(local_dt.is_utc)              #=> False
-    print(local_dt.is_local)            #=> True
-    print(local_dt.to_utc())            # returns UTCDateTime object.
-    print(local_dt.to_local())          # returns self.
+
+    print(local_dt.to_utc())               # returns UTCDateTime object.
+    print(local_dt.to_local())             # returns self.
