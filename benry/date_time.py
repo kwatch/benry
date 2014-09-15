@@ -1,7 +1,16 @@
 # -*- coding: utf-8 -*-
 
+###
+### $Release: 0.0.0 $
+### $Copyright: copyright(c) 2013-2014 kuwata-lab.com all rights reserved $
+### $License: MIT License $
+###
+
+
 __all__ = ('UTCDateTime', 'LocalDateTime',)
 
+
+import sys
 from datetime import datetime as _datetime, date as _date, timedelta as _timedelta
 
 
