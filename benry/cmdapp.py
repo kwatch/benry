@@ -153,90 +153,7 @@ class Application(object):
         return output
 
     def _parse_options(self, args, optdefs):
-        optdict = {}
-        while args and args[0].startswith("-"):
-            optstr = args.pop(0)
-            #; [!ugy1h] stops to parse action options when arg is '--'.
-            if optstr == "--":
-                break
-            #; [!rja97] parses long options of action.
-            elif optstr.startswith("--"):
-                self._parse_long_option(optstr, args, optdict, optdefs)
-            #; [!ymcnv] parses short options of action.
-            else:
-                self._parse_short_option(optstr, args, optdict, optdefs)
-        return optdict
-
-    def _parse_long_option(self, optstr, args, optdict, optdefs):
-        assert optstr.startswith("--")
-        #; [!tzuoh] raises error when invalid format long option.
-        m = re.match('^--(\w[-\w]*)(?:=(.*))?$', optstr)  or \
-            error("%s: invalid option." % optstr)
-        optname, optval = m.groups()
-        #; [!h2olx] raises error when unknown long option.
-        optdef = find_by(optdefs, 'long', optname)  or \
-            error("%s: unknown option." % optstr)
-        #; [!ktzbb] raises error when long option requires arg but not specified.
-        if optdef.arg_required is True:
-            optval is not None  or error("%s: argument required." % optstr)
-        #; [!mzzd4] raises error when long option doesn't require arg but specified.
-        elif optdef.arg_required is None:
-            optval is None  or error("%s: unexpected argument." % optstr)
-        if optval is None:
-            optval = True
-        #; [!funte] raises error when validator returns error message for long option value.
-        #; [!ti5pm] converts long option value when converter specified to option definition.
-        optval, errmsg = optdef.handle_value(optval)
-        if errmsg:
-            error("%s: %s" % (optstr, errmsg))
-        if optdef.operate:
-            optdef.operate(optval, optdict)
-        else:
-            optdict[optdef.name] = optval
-
-    def _parse_short_option(self, optstr, args, optdict, optdefs):
-        assert optstr.startswith("-")
-        i = 1       # ignore first '-' character
-        length = len(optstr)
-        while i < length:
-            optch = optstr[i]
-            optdef = find_by(optdefs, 'short', optch)  or \
-                error("-%s: unknown option." % optch)
-            if optdef.arg_required == True:
-                i += 1
-                if i == length:
-                    #; [!sl2jw] raises error when short option requires arg but not specified.
-                    args  or error("-%s: argument required." % optch)
-                    optval = args.pop(0)
-                elif i < length:
-                    optval = optstr[i:]
-                else:
-                    assert False, "** unreachable: i=%r, optstr=%r" % (i, optstr)
-                i = length
-            elif optdef.arg_required == False:
-                i += 1
-                if i == length:
-                    optval = True
-                elif i < length:
-                    optval = optstr[i:]
-                else:
-                    assert False, "** unreachable: i=%r, optstr=%r" % (i, optstr)
-                i = length
-            else:
-                i += 1
-                optval = True
-            #; [!oftl6] raises error when validator returns error message for short option value.
-            #; [!9up6o] converts short option value when converter specified to option definition.
-            optval, errmsg = optdef.handle_value(optval)
-            if errmsg:
-                if optval is True: error("-%s: %s" % (optch, errmsg))
-                else:              error("-%s %s: %s" % (optch, optval, errmsg))
-            if optdef.operate:
-                optdef.operate(optval, optdict)
-            else:
-                optdict[optdef.name] = optval
-        #
-        return optdict
+        return OptionParser(optdefs).parse(args)
 
     def _validate_args(self, func, args):
         #; [!giakv] regards args after '_' as keyword-only args.
@@ -338,6 +255,105 @@ class App(Application):
             return output
         #
         return Application._run(self, args)
+
+
+class OptionParser(object):
+    """Command-option parser."""
+
+    def __init__(self, optdefs):
+        self._optdefs = optdefs
+
+    def _find_by_long(self, long):
+        return find_by(self._optdefs, 'long', long)
+
+    def _find_by_short(self, short):
+        return find_by(self._optdefs, 'short', short)
+
+    def parse(self, args):
+        optdict = {}
+        while args and args[0].startswith("-"):
+            optstr = args.pop(0)
+            #; [!ugy1h] stops to parse action options when arg is '--'.
+            if optstr == "--":
+                break
+            #; [!rja97] parses long options of action.
+            elif optstr.startswith("--"):
+                self._parse_long_option(optstr, args, optdict)
+            #; [!ymcnv] parses short options of action.
+            else:
+                self._parse_short_option(optstr, args, optdict)
+        return optdict
+
+    def _parse_long_option(self, optstr, args, optdict):
+        assert optstr.startswith("--")
+        #; [!tzuoh] raises error when invalid format long option.
+        m = re.match('^--(\w[-\w]*)(?:=(.*))?$', optstr)  or \
+            error("%s: invalid option." % optstr)
+        optname, optval = m.groups()
+        #; [!h2olx] raises error when unknown long option.
+        optdef = self._find_by_long(optname)  or \
+            error("%s: unknown option." % optstr)
+        #; [!ktzbb] raises error when long option requires arg but not specified.
+        if optdef.arg_required is True:
+            optval is not None  or error("%s: argument required." % optstr)
+        #; [!mzzd4] raises error when long option doesn't require arg but specified.
+        elif optdef.arg_required is None:
+            optval is None  or error("%s: unexpected argument." % optstr)
+        if optval is None:
+            optval = True
+        #; [!funte] raises error when validator returns error message for long option value.
+        #; [!ti5pm] converts long option value when converter specified to option definition.
+        optval, errmsg = optdef.handle_value(optval)
+        if errmsg:
+            error("%s: %s" % (optstr, errmsg))
+        if optdef.operate:
+            optdef.operate(optval, optdict)
+        else:
+            optdict[optdef.name] = optval
+
+    def _parse_short_option(self, optstr, args, optdict):
+        assert optstr.startswith("-")
+        i = 1       # ignore first '-' character
+        length = len(optstr)
+        while i < length:
+            optch = optstr[i]
+            optdef = self._find_by_short(optch)  or \
+                error("-%s: unknown option." % optch)
+            if optdef.arg_required == True:
+                i += 1
+                if i == length:
+                    #; [!sl2jw] raises error when short option requires arg but not specified.
+                    args  or error("-%s: argument required." % optch)
+                    optval = args.pop(0)
+                elif i < length:
+                    optval = optstr[i:]
+                else:
+                    assert False, "** unreachable: i=%r, optstr=%r" % (i, optstr)
+                i = length
+            elif optdef.arg_required == False:
+                i += 1
+                if i == length:
+                    optval = True
+                elif i < length:
+                    optval = optstr[i:]
+                else:
+                    assert False, "** unreachable: i=%r, optstr=%r" % (i, optstr)
+                i = length
+            else:
+                i += 1
+                optval = True
+            #; [!oftl6] raises error when validator returns error message for short option value.
+            #; [!9up6o] converts short option value when converter specified to option definition.
+            optval, errmsg = optdef.handle_value(optval)
+            if errmsg:
+                if optval is True: error("-%s: %s" % (optch, errmsg))
+                else:              error("-%s %s: %s" % (optch, optval, errmsg))
+            if optdef.operate:
+                optdef.operate(optval, optdict)
+            else:
+                optdict[optdef.name] = optval
+        #
+        return optdict
 
 
 class CommandOptionError(Exception):
