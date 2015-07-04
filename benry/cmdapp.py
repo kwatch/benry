@@ -143,7 +143,8 @@ class Application(object):
         action = find_by(self.actions, "name", action_name)  or \
             error("%s: unknown action." % action_name)
         self._curr_action = action
-        #
+        #; [!rja97] parses long options of action.
+        #; [!ymcnv] parses short options of action.
         optdict = self._parse_options(args, action.options)
         errmsg = self._validate_args(action.func, args)
         if errmsg:
@@ -276,10 +277,10 @@ class OptionParser(object):
             #; [!ugy1h] stops to parse action options when arg is '--'.
             if optstr == "--":
                 break
-            #; [!rja97] parses long options of action.
+            #; [!vmcdf] parses long options of action.
             elif optstr.startswith("--"):
                 self._parse_long_option(optstr, args, optdict)
-            #; [!ymcnv] parses short options of action.
+            #; [!b6178] parses short options of action.
             else:
                 self._parse_short_option(optstr, args, optdict)
         return optdict
