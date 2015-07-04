@@ -324,20 +324,15 @@ class OptionParser(object):
                 if i == length:
                     #; [!sl2jw] raises error when short option requires arg but not specified.
                     args  or error("-%s: argument required." % optch)
-                    optval = args.pop(0)
-                elif i < length:
-                    optval = optstr[i:]
-                else:
-                    assert False, "** unreachable: i=%r, optstr=%r" % (i, optstr)
+                assert i <= length
+                optval = (args.pop(0) if i == length else
+                          optstr[i:]  if i <  length else None)
                 i = length
             elif optdef.arg_required == False:
                 i += 1
-                if i == length:
-                    optval = True
-                elif i < length:
-                    optval = optstr[i:]
-                else:
-                    assert False, "** unreachable: i=%r, optstr=%r" % (i, optstr)
+                assert i <= length
+                optval = (True       if i == length else
+                          optstr[i:] if i <  length else None)
                 i = length
             else:
                 i += 1
