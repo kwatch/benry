@@ -170,6 +170,7 @@ class OptionParser_TC(unittest.TestCase):
     def provide_parser(self):
         optdefs = [
             Option.new("-h, --help",          "show help"),
+            Option.new("-v, --version",       "print version"),
             Option.new("-f, --file=FILE",     "filename"),
             Option.new("-i, --indent[=num]",  "indent (default 2)",
                        validate=lambda val: val is True or val.isdigit() or "integer expected."),
@@ -181,6 +182,9 @@ class OptionParser_TC(unittest.TestCase):
             Option.new("-d, --date=DATE",     "date (YYYY-MM-DD)",
                        validate=lambda val: re.match(r'^\d\d\d\d-\d\d-\d\d$', val) or "YYYY-MM-DD expected",
                        convert=lambda val: datetime.strptime(val, '%Y-%m-%d').date()),
+            Option.new("-I, --include=PATH",   "include path",
+                       operate=(lambda optval, optdict:
+                                  optdict.setdefault('include', []).append(optval))),
 
         ]
         return OptionParser(optdefs)
@@ -221,11 +225,6 @@ class OptionParser_TC(unittest.TestCase):
             optdict = parser.parse(args)
             ok (args) == ["arg1", "arg2"]
             ok (optdict) == {"help": True, "file": "file.txt"}
-            #
-            args = ["-hi4", "arg1", "arg2"]
-            optdict = parser.parse(args)
-            ok (args) == ["arg1", "arg2"]
-            ok (optdict) == {"help": True, "indent": "4"}
 
         @test("[!ugy1h] stops to parse action options when arg is '--'.")
         def _(self, parser):
@@ -253,12 +252,6 @@ class OptionParser_TC(unittest.TestCase):
             def fn(): parser.parse(args)
             ok (fn).raises(CommandOptionError, "--help=message: unexpected argument.")
 
-        @test("[!sl2jw] raises error when short option requires arg but not specified.")
-        def _(self, parser):
-            args = ["-hf"]
-            def fn(): parser.parse(args)
-            ok (fn).raises(CommandOptionError, "-f: argument required.")
-
         @test("[!tzuoh] raises error when invalid format long option.")
         def _(self, parser):
             args = ["--file:hom.txt"]
@@ -277,23 +270,104 @@ class OptionParser_TC(unittest.TestCase):
             def fn(): parser.parse(args)
             ok (fn).raises(CommandOptionError, "--indent=one: integer expected.")
 
-        @test("[!oftl6] raises error when validator returns error message for short option value.")
-        def _(self, parser):
-            args = ["-ih"]
-            def fn(): parser.parse(args)
-            ok (fn).raises(CommandOptionError, "-i h: integer expected.")
-
         @test("[!ti5pm] converts long option value when converter specified to option definition.")
         def _(self, parser):
             args = ["--date=2000-12-31"]
             optdict = parser.parse(args)
             ok (optdict) == {"date": date(2000, 12, 31)}
 
+        @test("[!x2rbq] operates long option value when operator specified to option definition.")
+        def _(self, parser):
+            args = ["--include=path1", "--include=path2"]
+            optdict = parser.parse(args)
+            ok (optdict) == {"include": ["path1", "path2"]}
+
+        @test("[!firba] parses short options with required argument.")
+        def _(self, parser):
+            args = ["-f", "arg1", "arg2"]
+            optdict = parser.parse(args)
+            ok (args) == ["arg2"]
+            ok (optdict) == {"file": "arg1"}
+            #
+            args = ["-hf", "arg1", "arg2"]
+            optdict = parser.parse(args)
+            ok (args) == ["arg2"]
+            ok (optdict) == {"help": True, "file": "arg1"}
+            #
+            args = ["-fhomhom.txt", "arg1", "arg2"]
+            optdict = parser.parse(args)
+            ok (args) == ["arg1", "arg2"]
+            ok (optdict) == {"file": "homhom.txt"}
+            #
+            args = ["-hfhomhom.txt", "arg1", "arg2"]
+            optdict = parser.parse(args)
+            ok (args) == ["arg1", "arg2"]
+            ok (optdict) == {"help": True, "file": "homhom.txt"}
+
+        @test("[!sl2jw] raises error when short option requires arg but not specified.")
+        def _(self, parser):
+            args = ["-hf"]
+            def fn(): parser.parse(args)
+            ok (fn).raises(CommandOptionError, "-f: argument required.")
+
+        @test("[!786zm] parses short options with optional argument.")
+        def _(self, parser):
+            args = ["-hi4", "arg1", "arg2"]
+            optdict = parser.parse(args)
+            ok (args) == ["arg1", "arg2"]
+            ok (optdict) == {"help": True, "indent": "4"}
+            #
+            args = ["-hi", "4", "arg1", "arg2"]
+            optdict = parser.parse(args)
+            ok (args) == ["4", "arg1", "arg2"]
+            ok (optdict) == {"help": True, "indent": True}
+            #
+            args = ["-i", "-h", "arg1", "arg2"]
+            optdict = parser.parse(args)
+            ok (args) == ["arg1", "arg2"]
+            ok (optdict) == {"help": True, "indent": True}
+            #
+            args = ["-hi"]
+            optdict = parser.parse(args)
+            ok (args) == []
+            ok (optdict) == {"help": True, "indent": True}
+
+        @test("[!ukp51] parses short options without argument.")
+        def _(self, parser):
+            args = ["-h", "-v", "arg1", "arg2"]
+            optdict = parser.parse(args)
+            ok (args) == ["arg1", "arg2"]
+            ok (optdict) == {"help": True, "version": True}
+            #
+            args = ["-hv", "arg1", "arg2"]
+            optdict = parser.parse(args)
+            ok (args) == ["arg1", "arg2"]
+            ok (optdict) == {"help": True, "version": True}
+            #
+            args = ["-h"]
+            optdict = parser.parse(args)
+            ok (args) == []
+            ok (optdict) == {"help": True}
+
+        @test("[!oftl6] raises error when validator returns error message for short option value.")
+        def _(self, parser):
+            def fn(): parser.parse(["-ih"])
+            ok (fn).raises(CommandOptionError, "-i h: integer expected.")
+            #
+            def fn(): parser.parse(["-d", "Sunday"])
+            ok (fn).raises(CommandOptionError, "-d Sunday: YYYY-MM-DD expected")
+
         @test("[!9up6o] converts short option value when converter specified to option definition.")
         def _(self, parser):
             args = ["-d", "2000-11-30"]
             optdict = parser.parse(args)
             ok (optdict) == {"date": date(2000, 11, 30)}
+
+        @test("[!dv250] operates short option value when operator specified to option definition.")
+        def _(self, parser):
+            args = ["-I", "path1", "-I", "path2", "-Ipath3"]
+            optdict = parser.parse(args)
+            ok (optdict) == {"include": ["path1", "path2", "path3"]}
 
 
 

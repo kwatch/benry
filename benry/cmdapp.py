@@ -307,6 +307,7 @@ class OptionParser(object):
         optval, errmsg = optdef.handle_value(optval)
         if errmsg:
             error("%s: %s" % (optstr, errmsg))
+        #; [!x2rbq] operates long option value when operator specified to option definition.
         if optdef.operate:
             optdef.operate(optval, optdict)
         else:
@@ -320,6 +321,7 @@ class OptionParser(object):
             optch = optstr[i]
             optdef = self._find_by_short(optch)  or \
                 error("-%s: unknown option." % optch)
+            #; [!firba] parses short options with required argument.
             if optdef.arg_required == True:
                 i += 1
                 if i == length:
@@ -329,12 +331,14 @@ class OptionParser(object):
                 optval = (args.pop(0) if i == length else
                           optstr[i:]  if i <  length else None)
                 i = length
+            #; [!786zm] parses short options with optional argument.
             elif optdef.arg_required == False:
                 i += 1
                 assert i <= length
                 optval = (True       if i == length else
                           optstr[i:] if i <  length else None)
                 i = length
+            #; [!ukp51] parses short options without argument.
             else:
                 i += 1
                 optval = True
@@ -344,6 +348,7 @@ class OptionParser(object):
             if errmsg:
                 if optval is True: error("-%s: %s" % (optch, errmsg))
                 else:              error("-%s %s: %s" % (optch, optval, errmsg))
+            #; [!dv250] operates short option value when operator specified to option definition.
             if optdef.operate:
                 optdef.operate(optval, optdict)
             else:
