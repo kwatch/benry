@@ -135,6 +135,13 @@ class Application(object):
     def _register(self, action):
         self.actions.append(action)
 
+    def find_action(self, name):
+        #; [!6bkoj] returns action object when found.
+        #; [!73cb0] accepts both action name and alias name.
+        #; [!vhitq] returns None when no action found.
+        return find_by(self.actions, 'name', name) or \
+               find_by(self.actions, 'alias', name)
+
     def action(self, cmddef, desc, _=None, alias=None):
         #; [!db73h] returns decorator which creates Action object and append to app object.
         #; [!go5an] can take alias name as keyword argument.
@@ -205,8 +212,7 @@ class Application(object):
             error("action name required.")
         #; [!kngbh] alias name is available as action name.
         #; [!wh6o5] error when unknown action name specified.
-        action = find_by(self.actions, "name", action_name)  or \
-                 find_by(self.actions, "alias", action_name)  or \
+        action = self.find_action(action_name)  or \
             error("%s: unknown action." % action_name)
         self._curr_action = action
         #; [!rja97] parses long options of action.
@@ -295,8 +301,7 @@ class App(Application):
     def do_help(self, action_name=None, **opts):
         #; [!8dpon] can accept both action name and alias name.
         if action_name:
-            action = find_by(self.actions, 'name', action_name)  or \
-                     find_by(self.actions, 'alias', action_name)  or \
+            action = self.find_action(action_name)  or \
                 error("%s: unknown action name." % action_name)
             help_msg = action.help_message(self.script_name)
         else:

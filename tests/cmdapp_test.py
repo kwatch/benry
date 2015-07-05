@@ -455,6 +455,26 @@ class Application_TC(unittest.TestCase):
             ok (app.desc) == "print 'Hello world' message"
 
 
+    with subject("#find_action()"):
+
+        @test("[!6bkoj] returns action object when found.")
+        def _(self, app):
+            action = app.find_action("convert")
+            ok (action) != None
+            ok (action.name) == "convert"
+
+        @test("[!73cb0] accepts both action name and alias name.")
+        def _(self, app):
+            action1 = app.find_action("history")
+            action2 = app.find_action("hist")
+            ok (action2) != None
+            ok (action2).is_(action1)
+
+        @test("[!vhitq] returns None when no action found.")
+        def _(self, app):
+            ok (app.find_action("test")) == None
+
+
     with subject("#action()"):
 
         @test("[!g8kq7] creates new Action object (with options) and keeps it internally.")
