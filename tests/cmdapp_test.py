@@ -777,7 +777,8 @@ class App_TC(unittest.TestCase):
         def _(self, app):
             expected = r"""
 hello  - print hello world
-Usage: hello <action> [<options>] [<args>...]
+Usage:
+  hello <action> [<options>] [<args>...]
 Actions:
   help       : print help
 """[1:]
@@ -787,7 +788,8 @@ Actions:
         def _(self):
             app = App("hello")
             expected = r"""
-Usage: hello <action> [<options>] [<args>...]
+Usage:
+  hello <action> [<options>] [<args>...]
 Actions:
   help       : print help
 """[1:]
@@ -854,7 +856,8 @@ Options:
             app = App("hello", "print 'Hello world' message")
             s = app.help_message()
             ok (s).should.startswith("hello  - print 'Hello world' message\n" +
-                                     "Usage: hello ")
+                                     "Usage:\n" +
+                                     "  hello ")
 
 
 

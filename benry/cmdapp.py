@@ -316,11 +316,15 @@ class App(Application):
             add("%s  - %s\n" % (script_name, self.desc))
         width = self._preferred_width()
         format = "  %-" + str(width) + "s : %s\n"
-        add("Usage: %s <action> [<options>] [<args>...]\n" % script_name)
+        add("Usage:\n")
+        add("  %s <action> [<options>] [<args>...]\n" % script_name)
         add("Actions:\n")
+        size = len(buf)
         for x in sorted(self._action_list, key=lambda x: x.name):
             if x.desc:
                 add(format % (x.name, x.desc))
+        if size == len(buf):
+            buf.pop()         # remove "Actions:\n"
         return "".join(buf)
 
     def _preferred_width(self, max_width=25, min_width=10):
