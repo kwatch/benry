@@ -24,17 +24,19 @@ class Action_TC(unittest.TestCase):
         @test("[!rf00z] returns new Action object.")
         def _(self):
             fn = lambda: None
-            obj = Action.new("cp src dst", "copy file", fn, [])
+            obj = Action.new("cp src dst", "copy file", fn, [], alias=None)
             ok (obj).is_a(Action)
             ok (obj.desc) == "copy file"
             ok (obj.func) == fn
             ok (obj.options) == []
+            ok (obj.alias) == None
 
         @test("[!3g317] parses action definition string.")
         def _(self):
-            obj = Action.new("cp src dst", "copy file", None, [])
+            obj = Action.new("cp src dst", "copy file", None, [], alias="dup")
             ok (obj.name) == "cp"
             ok (obj.argdef) == "src dst"
+            ok (obj.alias) == "dup"
 
 
     with subject(".#parse()"):

@@ -369,19 +369,20 @@ def error(msg):
 class Action(object):
     """Action definition."""
 
-    def __init__(self, name, argdef, desc, func, options):
+    def __init__(self, name, argdef, desc, func, options, alias=None):
         self.name    = name
         self.argdef  = argdef
         self.desc    = desc
         self.func    = func
         self.options = options
+        self.alias   = alias
 
     @classmethod
-    def new(cls, defstr, desc, func, opts):
+    def new(cls, defstr, desc, func, opts, alias=None):
         #; [!3g317] parses action definition string.
         name, argdef = cls.parse(defstr)
         #; [!rf00z] returns new Action object.
-        return cls(name, argdef, desc, func, opts)
+        return cls(name, argdef, desc, func, opts, alias=alias)
 
     @staticmethod
     def parse(defstr):
