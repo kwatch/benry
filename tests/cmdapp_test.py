@@ -66,6 +66,32 @@ class Action_TC(unittest.TestCase):
             ok (called[0]) == 123
 
 
+    with subject("#help_message()"):
+
+        @test("[!98tyn] adds document if function has it.")
+        def _(self):
+            def func(arg):
+                """
+                AAA
+                BBB
+
+                CCC
+                """
+                pass
+            action = Action.new("test", "do test command", func, [])
+            ok (action.help_message("myscript")) == r"""
+myscript test - do test command
+
+  AAA
+  BBB
+
+  CCC
+  
+Usage:
+  myscript test
+"""[1:]
+
+
     with subject("#format_options()"):
 
         @test("[!s2ip2] returns command-option help string.")

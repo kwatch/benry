@@ -483,6 +483,13 @@ class Action(object):
     def help_message(self, script_name, width=30, indent=2, sep=': '):
         buf = []; add = buf.append
         add("%s %s - %s\n" % (script_name, self.name, self.desc))
+        #; [!98tyn] adds document if function has it.
+        doc = self.format_funcdoc()
+        if doc:
+            add(doc)
+            if not doc.endswith("\n"):
+                add("\n")
+        #
         add("Usage:\n")
         if self.options:
             add("  %s %s [options] %s\n" % (script_name, self.name, self.argdef))
@@ -498,6 +505,15 @@ class Action(object):
         text = "".join( format % (opt.format(), opt.desc)
                             for opt in self.options if opt.desc )
         return text
+
+    def format_funcdoc(self, indent="  "):
+        doc = self.func.__doc__
+        if not doc:
+            return ""
+        m = re.compile(r'^([ \t]+)', re.M).search(doc)
+        original_indent = m.group(1) if m else ""
+        doc = re.compile(r'^'+original_indent, re.M).sub(indent, doc)
+        return doc
 
 
 class Option(object):
