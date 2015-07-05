@@ -434,13 +434,13 @@ class Application_TC(unittest.TestCase):
             app._result = ("convert", args, opts)
             return 0
         #
-        @app.action("hist", "show history")
+        @app.action("history", "show history")
         @app.option("-p",   "print content")
         @app.option("-d, --date=DATE", "date (YYYY-MM-DD)",
                     validate=lambda val: re.match(r'^\d\d\d\d-\d\d-\d\d$', val) or "YYYY-MM-DD expected",
                     convert=lambda val: datetime.strptime(val, '%Y-%m-%d').date())
-        def do_hist(*args, **opts):
-            app._result = ("hist", args, opts)
+        def do_history(*args, **opts):
+            app._result = ("history", args, opts)
             return 0
         #
         return app
@@ -695,12 +695,12 @@ class Application_TC(unittest.TestCase):
         def _(self, app):
             original = sys.argv[:]
             try:
-                sys.argv[:] = ["hom.py", "hist", "-p", "arg1", "arg2"]
+                sys.argv[:] = ["hom.py", "history", "-p", "arg1", "arg2"]
                 try:
                     app.main()
                 except SystemExit as ex:
                     pass
-                ok (app._result) == ('hist', ('arg1', 'arg2'), {'p': True})
+                ok (app._result) == ('history', ('arg1', 'arg2'), {'p': True})
             finally:
                 sys.argv[:] = original
 
