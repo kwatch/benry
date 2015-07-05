@@ -885,7 +885,7 @@ Actions:
             expected = r"""
 hello history - show history
 Usage:
-  hello history [options] None
+  hello history [options]
 Options:
   -d, --date=DATE               : date (YYYY-MM-DD)
 """[1:]

@@ -490,13 +490,14 @@ class Action(object):
             if not doc.endswith("\n"):
                 add("\n")
         #
+        argdef_str = " "+self.argdef if self.argdef else ""
         add("Usage:\n")
         if self.options:
-            add("  %s %s [options] %s\n" % (script_name, self.name, self.argdef))
+            add("  %s %s [options]%s\n" % (script_name, self.name, argdef_str))
             add("Options:\n")
             add(self.format_options(width=width, indent=indent, sep=sep))
         else:
-            add("  %s %s %s\n" % (script_name, self.name, self.argdef))
+            add("  %s %s%s\n" % (script_name, self.name, argdef_str))
         return "".join(buf)
 
     def format_options(self, width=30, indent=2, sep=': '):
