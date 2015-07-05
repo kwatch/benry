@@ -570,6 +570,17 @@ class Application_TC(unittest.TestCase):
             def fn(): app.run()
             ok (fn).raises(CommandOptionError, "action name required.")
 
+        @test("[!kngbh] alias name is available as action name.")
+        def _(self):
+            app = Application("hello", "print hello world")
+            @app.action("switch name", "switch current branch", alias="sw")
+            def do_switch(name):
+                called[0] = name
+            called = [False]
+            #
+            app.run("sw", "master")     # invoke with alias name
+            ok (called) == ["master"]
+
         @test("[!wh6o5] error when unknown action name specified.")
         def _(self):
             app = Application("hello", "print hello world")

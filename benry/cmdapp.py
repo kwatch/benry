@@ -140,8 +140,10 @@ class Application(object):
         #; [!k0lmj] error when no action name nor default action.
         if not action_name:
             error("action name required.")
+        #; [!kngbh] alias name is available as action name.
         #; [!wh6o5] error when unknown action name specified.
         action = find_by(self.actions, "name", action_name)  or \
+                 find_by(self.actions, "alias", action_name)  or \
             error("%s: unknown action." % action_name)
         self._curr_action = action
         #; [!rja97] parses long options of action.
