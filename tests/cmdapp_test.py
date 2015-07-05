@@ -674,6 +674,10 @@ class Application_TC(unittest.TestCase):
             @app2.action("move dst files...", "copy file")
             def do_move(dst, *files, **opts):
                 pass
+            @app2.action("fork branch", "create new branch")
+            @app2.option("-h, --help", "show help")
+            def do_fork(branch, _=None, help=False):
+                pass
             return app2
 
         @test("[!1yqpi] error when required argument is not specified.")
@@ -682,6 +686,10 @@ class Application_TC(unittest.TestCase):
             ok (fn1).raises(CommandOptionError, "argument (old-name) required.")
             def fn2(): app2.run("rename", "old1")
             ok (fn2).raises(CommandOptionError, "argument (new-name) required.")
+            def fn3(): app2.run("move")
+            ok (fn3).raises(CommandOptionError, "argument (dst) required.")
+            def fn4(): app2.run("fork")
+            ok (fn4).raises(CommandOptionError, "argument (branch) required.")
 
         @test("[!8pma3] error when too many arguments specified.")
         def _(self, app2):

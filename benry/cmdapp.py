@@ -239,7 +239,7 @@ class Application(object):
                 return "too many arguments."
         #; [!1yqpi] error when required argument is not specified.
         arg_defaults = _func_defaults(func) or ()
-        arg_count_min = arg_count_max - len(arg_defaults)
+        arg_count_min = func.__code__.co_argcount - len(arg_defaults)
         if len(args) < arg_count_min:
             arg_name = func.__code__.co_varnames[len(args)]
             return "argument (%s) required." % arg_name.replace('_', '-')
