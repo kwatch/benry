@@ -107,7 +107,7 @@ class Option_TC(unittest.TestCase):
             fn_convert  = lambda val: 2 if val is True else int(val)
             fn_operate  = lambda val, opts: opts.__setitem__('indent', val)
             ret = Option.new("-i, --indent[=d]", "indent (default 2)",
-                                       validate=fn_validate, convert=fn_convert, operate=fn_operate)
+                             validate=fn_validate, convert=fn_convert, operate=fn_operate)
             ok (ret).attr("short", "i").attr("long", "indent").attr("desc", "indent (default 2)")
             ok (ret.arg_name) == "d"
             ok (ret.arg_required) == False
