@@ -126,21 +126,21 @@ class Application(object):
     def __init__(self, name=None, desc=None, _=None, default=None):
         self.name = name
         self.desc = desc
-        self.actions = []
         self.default = default
+        self._action_list = []
         self._curr_options = []
         self._curr_func    = None
         self._curr_action  = None
 
     def _register(self, action):
-        self.actions.append(action)
+        self._action_list.append(action)
 
     def find_action(self, name):
         #; [!6bkoj] returns action object when found.
         #; [!73cb0] accepts both action name and alias name.
         #; [!vhitq] returns None when no action found.
-        return find_by(self.actions, 'name', name) or \
-               find_by(self.actions, 'alias', name)
+        return find_by(self._action_list, 'name', name) or \
+               find_by(self._action_list, 'alias', name)
 
     def action(self, cmddef, desc, _=None, alias=None):
         #; [!db73h] returns decorator which creates Action object and append to app object.
@@ -318,14 +318,14 @@ class App(Application):
         format = "  %-" + str(width) + "s : %s\n"
         add("Usage: %s <action> [<options>] [<args>...]\n" % script_name)
         add("Actions:\n")
-        for x in sorted(self.actions, key=lambda x: x.name):
+        for x in sorted(self._action_list, key=lambda x: x.name):
             if x.desc:
                 add(format % (x.name, x.desc))
         return "".join(buf)
 
     def _preferred_width(self, max_width=25, min_width=10):
-        if self.actions:
-            max_len = max( len(x.name) for x in self.actions )
+        if self._action_list:
+            max_len = max( len(x.name) for x in self._action_list )
             max_width = min(max_len, max_width)
         width = max(max_width, min_width)
         return width
