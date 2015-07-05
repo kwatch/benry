@@ -434,7 +434,7 @@ class Application_TC(unittest.TestCase):
             app._result = ("convert", args, opts)
             return 0
         #
-        @app.action("history", "show history")
+        @app.action("history", "show history", alias="hist")
         @app.option("-p",   "print content")
         @app.option("-d, --date=DATE", "date (YYYY-MM-DD)",
                     validate=lambda val: re.match(r'^\d\d\d\d-\d\d-\d\d$', val) or "YYYY-MM-DD expected",
@@ -729,6 +729,24 @@ class Application_TC(unittest.TestCase):
             sout, serr = d_io
             ok (str(sout)) == "Hello\n"
             ok (str(serr)) == ""
+
+
+    with subject("#do_help()"):
+
+        @test("[!8dpon] can accept both action name and alias name.")
+        def _(self, app):
+            expected = r"""
+cmdapp_test.py history - show history
+Usage:
+  cmdapp_test.py history [options] None
+Options:
+  -p                            : print content
+  -d, --date=DATE               : date (YYYY-MM-DD)
+"""[1:]
+            ret = app.do_help("history")  # action name
+            ok (ret) == expected
+            ret = app.do_help("hist")     # alias name
+            ok (ret) == expected
 
 
 

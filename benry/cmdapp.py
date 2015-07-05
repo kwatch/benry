@@ -182,9 +182,10 @@ class Application(object):
         return self.name or os.path.basename(sys.argv[0])
 
     def do_help(self, action_name=None, **opts):
-        script_name = os.path.basename(sys.argv[0])
+        #; [!8dpon] can accept both action name and alias name.
         if action_name:
             action = find_by(self.actions, 'name', action_name)  or \
+                     find_by(self.actions, 'alias', action_name)  or \
                 error("%s: unknown action name." % action_name)
             help_msg = action.help_message(self.script_name)
         else:
