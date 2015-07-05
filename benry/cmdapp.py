@@ -181,38 +181,6 @@ class Application(object):
     def script_name(self):
         return self.name or os.path.basename(sys.argv[0])
 
-    def do_help(self, action_name=None, **opts):
-        #; [!8dpon] can accept both action name and alias name.
-        if action_name:
-            action = find_by(self.actions, 'name', action_name)  or \
-                     find_by(self.actions, 'alias', action_name)  or \
-                error("%s: unknown action name." % action_name)
-            help_msg = action.help_message(self.script_name)
-        else:
-            help_msg = self.help_message()
-        return help_msg
-
-    def help_message(self):
-        buf = []; add = buf.append
-        script_name = self.script_name
-        if self.desc:
-            add("%s  - %s\n" % (script_name, self.desc))
-        width = self._preferred_width()
-        format = "  %-" + str(width) + "s : %s\n"
-        add("Usage: %s <action> [<options>] [<args>...]\n" % script_name)
-        add("Actions:\n")
-        for x in sorted(self.actions, key=lambda x: x.name):
-            if x.desc:
-                add(format % (x.name, x.desc))
-        return "".join(buf)
-
-    def _preferred_width(self, max_width=25, min_width=10):
-        if self.actions:
-            max_len = max( len(x.name) for x in self.actions )
-            max_width = min(max_len, max_width)
-        width = max(max_width, min_width)
-        return width
-
 
 class App(Application):
 
@@ -260,6 +228,39 @@ class App(Application):
             return output
         #
         return Application._run(self, args)
+
+    def do_help(self, action_name=None, **opts):
+        #; [!8dpon] can accept both action name and alias name.
+        if action_name:
+            action = find_by(self.actions, 'name', action_name)  or \
+                     find_by(self.actions, 'alias', action_name)  or \
+                error("%s: unknown action name." % action_name)
+            help_msg = action.help_message(self.script_name)
+        else:
+            help_msg = self.help_message()
+        return help_msg
+
+    def help_message(self):
+        #; [!fjnd9] command name and description are displayed in help message.
+        buf = []; add = buf.append
+        script_name = self.script_name
+        if self.desc:
+            add("%s  - %s\n" % (script_name, self.desc))
+        width = self._preferred_width()
+        format = "  %-" + str(width) + "s : %s\n"
+        add("Usage: %s <action> [<options>] [<args>...]\n" % script_name)
+        add("Actions:\n")
+        for x in sorted(self.actions, key=lambda x: x.name):
+            if x.desc:
+                add(format % (x.name, x.desc))
+        return "".join(buf)
+
+    def _preferred_width(self, max_width=25, min_width=10):
+        if self.actions:
+            max_len = max( len(x.name) for x in self.actions )
+            max_width = min(max_len, max_width)
+        width = max(max_width, min_width)
+        return width
 
 
 class OptionParser(object):

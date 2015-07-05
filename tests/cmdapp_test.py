@@ -454,13 +454,6 @@ class Application_TC(unittest.TestCase):
             ok (app.name) == "hello"
             ok (app.desc) == "print 'Hello world' message"
 
-        @test("[!fjnd9] command name and description are displayed in help message.")
-        def _(self):
-            app = Application("hello", "print 'Hello world' message")
-            s = app.help_message()
-            ok (s).should.startswith("hello  - print 'Hello world' message\n" +
-                                     "Usage: hello ")
-
 
     with subject("#action()"):
 
@@ -731,24 +724,6 @@ class Application_TC(unittest.TestCase):
             ok (str(serr)) == ""
 
 
-    with subject("#do_help()"):
-
-        @test("[!8dpon] can accept both action name and alias name.")
-        def _(self, app):
-            expected = r"""
-cmdapp_test.py history - show history
-Usage:
-  cmdapp_test.py history [options] None
-Options:
-  -p                            : print content
-  -d, --date=DATE               : date (YYYY-MM-DD)
-"""[1:]
-            ret = app.do_help("history")  # action name
-            ok (ret) == expected
-            ret = app.do_help("hist")     # alias name
-            ok (ret) == expected
-
-
 
 class App_TC(unittest.TestCase):
 
@@ -814,6 +789,38 @@ Actions:
             ok (ret) == {"Help": True, "Version": True}
             ret = app.run("--Help", "--Version")
             ok (ret) == {"Help": True, "Version": True}
+
+
+    with subject("#do_help()"):
+
+        @test("[!8dpon] can accept both action name and alias name.")
+        def _(self, app):
+            @app.action("history", "show history", alias="hist")
+            @app.option("-d, --date=DATE", "date (YYYY-MM-DD)")
+            def do_history():
+                pass
+            #
+            expected = r"""
+hello history - show history
+Usage:
+  hello history [options] None
+Options:
+  -d, --date=DATE               : date (YYYY-MM-DD)
+"""[1:]
+            ret = app.do_help("history")  # action name
+            ok (ret) == expected
+            ret = app.do_help("hist")     # alias name
+            ok (ret) == expected
+
+
+    with subject("#help_message()"):
+
+        @test("[!fjnd9] command name and description are displayed in help message.")
+        def _(self):
+            app = App("hello", "print 'Hello world' message")
+            s = app.help_message()
+            ok (s).should.startswith("hello  - print 'Hello world' message\n" +
+                                     "Usage: hello ")
 
 
 
