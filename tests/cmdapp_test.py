@@ -52,6 +52,20 @@ class Action_TC(unittest.TestCase):
             ok (ret) == ("cp", "src dst")
 
 
+    with subject(".__call__()"):
+
+        @test("[!tm64g] invokes func with arguments.")
+        def _(self):
+            def func(arg):
+                called[0] = arg
+                return "ok"
+            called = [None]
+            action = Action.new("test", "test", func, [])
+            ok (called[0]) == None
+            ok (action(123)) == "ok"
+            ok (called[0]) == 123
+
+
     with subject("#format_options()"):
 
         @test("[!s2ip2] returns command-option help string.")

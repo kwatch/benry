@@ -470,6 +470,10 @@ class Action(object):
             argdef = argdef.strip()
         return name, argdef
 
+    def __call__(self, *args, **kwargs):
+        #; [!tm64g] invokes func with arguments.
+        return self.func(*args, **kwargs)
+
     def help_message(self, script_name, width=30, indent=2, sep=': '):
         buf = []; add = buf.append
         add("%s %s - %s\n" % (script_name, self.name, self.desc))
