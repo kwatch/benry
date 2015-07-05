@@ -483,11 +483,11 @@ class Application_TC(unittest.TestCase):
             @app.action("hist [N]", "show git history")
             def git_hist(*args, **opts):
                 pass
-            ok (app._action_list).length(1)
-            ok (app._action_list[0]).is_a(Action)
-            ok (app._action_list[0].name)   == "hist"
-            ok (app._action_list[0].argdef) == "[N]"
-            ok (app._action_list[0].desc)   == "show git history"
+            action = app.find_action("hist")
+            ok (action).is_a(Action)
+            ok (action.name)   == "hist"
+            ok (action.argdef) == "[N]"
+            ok (action.desc)   == "show git history"
 
         @test("[!db73h] returns decorator which creates Action object and append to app object.")
         def _(self):
@@ -504,7 +504,7 @@ class Application_TC(unittest.TestCase):
             @app.action("history [N]", "show git history", alias="hist")
             def git_histotry(*args, **opts):
                 pass
-            action = app._action_list[-1]
+            action = app.find_action("history")
             ok (action.name) == "history"
             ok (action.alias) == "hist"
 
