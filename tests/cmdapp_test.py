@@ -485,6 +485,16 @@ class Application_TC(unittest.TestCase):
             ret = git_hist(10, 20, z=30)
             ok (ret) == [(10, 20), {"z": 30}]
 
+        @test("[!go5an] can take alias name as keyword argument.")
+        def _(self):
+            app = Application()
+            @app.action("history [N]", "show git history", alias="hist")
+            def git_histotry(*args, **opts):
+                pass
+            action = app.actions[-1]
+            ok (action.name) == "history"
+            ok (action.alias) == "hist"
+
 
     with subject("#option()"):
 

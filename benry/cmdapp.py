@@ -72,13 +72,14 @@ class Application(object):
     def _register(self, action):
         self.actions.append(action)
 
-    def action(self, cmddef, desc):
+    def action(self, cmddef, desc, _=None, alias=None):
         #; [!db73h] returns decorator which creates Action object and append to app object.
+        #; [!go5an] can take alias name as keyword argument.
         def deco(func):
             #; [!g8kq7] creates new Action object (with options) and keeps it internally.
             options = self._curr_options
             self._curr_options = []
-            action = Action.new(cmddef, desc, func, options)
+            action = Action.new(cmddef, desc, func, options, alias=alias)
             self._register(action)
             return func
         return deco
