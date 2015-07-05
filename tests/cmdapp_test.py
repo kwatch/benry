@@ -68,6 +68,26 @@ class Action_TC(unittest.TestCase):
 
     with subject("#help_message()"):
 
+        @test("[!ccl90] returns help message of action.")
+        def _(self):
+            action = Action.new("test", "do test command", lambda: None, [])
+            ok (action.help_message("myscript")) == r"""
+myscript test - do test command
+Usage:
+  myscript test
+"""[1:]
+
+        @test("[!zohvj] includes script name, action name and description.")
+        def _(self):
+            def func(arg):
+                pass
+            action = Action.new("test", "do test command", func, [])
+            ok (action.help_message("myscript")) == r"""
+myscript test - do test command
+Usage:
+  myscript test
+"""[1:]
+
         @test("[!98tyn] adds document if function has it.")
         def _(self):
             def func(arg):
@@ -89,6 +109,37 @@ myscript test - do test command
   
 Usage:
   myscript test
+"""[1:]
+
+        @test("[!e8ps2] includes usage of action.")
+        def _(self):
+            def func(name=None):
+                pass
+            action = Action.new("test [name]", "do test command", func, [])
+            ok (action.help_message("myscript")) == r"""
+myscript test - do test command
+Usage:
+  myscript test [name]
+"""[1:]
+
+        @test("[!kb62s] includes help message of options.")
+        def _(self):
+            optdefs = [
+                Option.new("-h, --help", "show help"),
+                Option.new("-f, --file=FILE", "filename"),
+                Option.new("--debug[=level]", "debug mode"),
+            ]
+            def func(name=None):
+                pass
+            action = Action.new("test [name]", "do test command", func, optdefs)
+            ok (action.help_message("myscript")) == r"""
+myscript test - do test command
+Usage:
+  myscript test [options] [name]
+Options:
+  -h, --help                    : show help
+  -f, --file=FILE               : filename
+      --debug[=level]           : debug mode
 """[1:]
 
 

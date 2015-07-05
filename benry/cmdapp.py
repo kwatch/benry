@@ -482,6 +482,7 @@ class Action(object):
 
     def help_message(self, script_name, width=30, indent=2, sep=': '):
         buf = []; add = buf.append
+        #; [!zohvj] includes script name, action name and description.
         add("%s %s - %s\n" % (script_name, self.name, self.desc))
         #; [!98tyn] adds document if function has it.
         doc = self.format_funcdoc()
@@ -489,15 +490,18 @@ class Action(object):
             add(doc)
             if not doc.endswith("\n"):
                 add("\n")
-        #
+        #; [!e8ps2] includes usage of action.
         argdef_str = " "+self.argdef if self.argdef else ""
         add("Usage:\n")
         if self.options:
             add("  %s %s [options]%s\n" % (script_name, self.name, argdef_str))
-            add("Options:\n")
-            add(self.format_options(width=width, indent=indent, sep=sep))
         else:
             add("  %s %s%s\n" % (script_name, self.name, argdef_str))
+        #; [!kb62s] includes help message of options.
+        if self.options:
+            add("Options:\n")
+            add(self.format_options(width=width, indent=indent, sep=sep))
+        #; [!ccl90] returns help message of action.
         return "".join(buf)
 
     def format_options(self, width=30, indent=2, sep=': '):
