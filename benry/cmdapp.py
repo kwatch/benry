@@ -290,7 +290,8 @@ class App(Application):
 
     def _run(self, args):    # override
         #; [!13njs] parses global command-line options.
-        if args and args[0].startswith("-"):
+        #; [!q353n] '-' should be regard as argument, not option.
+        if args and args[0].startswith("-") and args[0] != "-":
             action = self._global_action
             optdict = self._parse_options(args, action.options)
             output = action.func(*args, **optdict)
@@ -349,7 +350,8 @@ class OptionParser(object):
 
     def parse(self, args):
         optdict = {}
-        while args and args[0].startswith("-"):
+        #; [!5eerp] '-' should be regard as argument, not option string.
+        while args and args[0].startswith("-") and args[0] != "-":
             optstr = args.pop(0)
             #; [!ugy1h] stops to parse action options when arg is '--'.
             if optstr == "--":

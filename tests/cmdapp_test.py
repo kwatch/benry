@@ -208,6 +208,13 @@ class OptionParser_TC(unittest.TestCase):
 
     with subject("#parse()"):
 
+        @test("[!5eerp] '-' should be regard as argument, not option string.")
+        def _(self, parser):
+            args = ["-", "-h"]
+            optdict = parser.parse(args)
+            ok (args) == ["-", "-h"]
+            ok (optdict) == {}
+
         @test("[!vmcdf] parses long options of action.")
         def _(self, parser):
             args = [
@@ -825,6 +832,11 @@ Actions:
             ok (ret) == {"Help": True, "Version": True}
             ret = app.run("--Help", "--Version")
             ok (ret) == {"Help": True, "Version": True}
+
+        @test("[!q353n] '-' should be regard as argument, not option.")
+        def _(self, app):
+            def fn(): app.run("-")
+            ok (fn).raises(CommandOptionError, "-: unknown action.")
 
 
     with subject("#do_help()"):
