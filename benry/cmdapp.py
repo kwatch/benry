@@ -62,6 +62,7 @@ Output example::
 
 """
 
+__version__ = "$Release: 0.0.0 $".split()[1]
 __all__ = (
     'App', 'Application', 'OptionParser', 'Action', 'Option',
     'error', 'CommandOptionError', 'OptionDefinitionError',
