@@ -1,5 +1,61 @@
 # -*- coding: utf-8 -*-
 
+"""
+Library to create command-line application.
+
+Example script (filename: 'myhello')::
+
+    #!/usr/bin/env python
+    # -*- coding: utf-8 -*-
+
+    ## create application object
+    from benry.cmdapp import App, error
+    app = App("myhello", "example script", version="0.0.0")
+    action = app.action
+    option = app.option
+
+    ## register sub-command
+    @action("hello [name]", "print hello world")
+    @option("-i, --indent[=N]", "indent width (default 0)",
+            validate=[
+              lambda val: val.isdigit() or "integer expected",
+              lambda val: int(val) >= 0 or "positive value expected",
+            ])
+    def do_hello(name='world', _=None, indent=0):
+        indent = int(indent)
+        msg = "Hello %s!" % name
+        if indent:
+          msg = " " * indent + msg
+        print(msg)
+
+    if __name__ == '__main__':
+        app.main()
+
+Output example::
+
+    $ chmod a+x ./myhello
+    $ ./myhello                   # same as ./myhello help
+    myhello  - example script
+    Usage: myhello <action> [<options>] [<args>...]
+    Actions:
+      hello      : print hello world
+      help       : print help
+
+    $ ./myhello help hello
+    myhello hello - print hello world
+    Usage:
+      myhello hello [options] [name]
+    Options:
+      -i, --indent[=N]              : indent width (default 0)
+
+    $ ./myhello hello
+    Hello world!
+
+    $ ./myhello hello -i4 "John Smith"
+    Hello John Smith!
+
+"""
+
 __all__ = (
     'App', 'Application', 'OptionParser', 'Action', 'Option',
     'error', 'CommandOptionError', 'OptionDefinitionError',
