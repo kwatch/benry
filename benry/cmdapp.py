@@ -485,7 +485,9 @@ class Action(object):
         #; [!rmrd7] don't print action when print_action arg is falthy.
         action_str = " " + self.name if print_action else ""
         #; [!zohvj] includes script name, action name and description.
-        add("%s%s - %s\n" % (script_name, action_str, self.desc))
+        #; [!iqqaw] don't print script nor action name when description is None.
+        if self.desc is not None:
+            add("%s%s - %s\n" % (script_name, action_str, self.desc))
         #; [!98tyn] adds document if function has it.
         add(self.format_funcdoc(indent=indent) or "")
         #; [!e8ps2] includes usage of action.

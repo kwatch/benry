@@ -79,13 +79,23 @@ Usage:
 
         @test("[!zohvj] includes script name, action name and description.")
         def _(self):
-            def func(arg):
+            def func(arg=None):
                 pass
-            action = Action.new("test", "do test command", func, [])
+            action = Action.new("test [arg]", "do test command", func, [])
             ok (action.help_message("myscript")) == r"""
 myscript test - do test command
 Usage:
-  myscript test
+  myscript test [arg]
+"""[1:]
+
+        @test("[!iqqaw] don't print script nor action name when description is None.")
+        def _(self):
+            def func(arg=None):
+                pass
+            action = Action.new("test [arg]", None, func, [])
+            ok (action.help_message("myscript")) == r"""
+Usage:
+  myscript test [arg]
 """[1:]
 
         @test("[!rmrd7] don't print action when print_action arg is falthy.")
