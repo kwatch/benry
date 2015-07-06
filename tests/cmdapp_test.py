@@ -207,16 +207,16 @@ class Option_TC(unittest.TestCase):
         @test("[!8s9ue] parses option definition string.")
         def _(self):
             fn_validation = lambda val: val.isdigit() or "integer requried."
-            fn_convert  = lambda val: 2 if val is True else int(val)
+            fn_conversion = lambda val: 2 if val is True else int(val)
             fn_operate  = lambda val, opts: opts.__setitem__('indent', val)
             ret = Option.new("-i, --indent[=d]", "indent (default 2)",
-                             validation=fn_validation, convert=fn_convert, operate=fn_operate)
+                             validation=fn_validation, conversion=fn_conversion, operate=fn_operate)
             ok (ret).attr("short", "i").attr("long", "indent").attr("desc", "indent (default 2)")
             ok (ret.arg_name) == "d"
             ok (ret.arg_required) == False
             ok (ret.arg_type) == None
             ok (ret.validation) == fn_validation
-            ok (ret.convert)  == fn_convert
+            ok (ret.conversion) == fn_conversion
             ok (ret.operate)  == fn_operate
 
 
@@ -300,7 +300,7 @@ class OptionParser_TC(unittest.TestCase):
                        ]),
             Option.new("-d, --date=DATE",     "date (YYYY-MM-DD)",
                        validation=lambda val: re.match(r'^\d\d\d\d-\d\d-\d\d$', val) or "YYYY-MM-DD expected",
-                       convert=lambda val: datetime.strptime(val, '%Y-%m-%d').date()),
+                       conversion=lambda val: datetime.strptime(val, '%Y-%m-%d').date()),
             Option.new("-I, --include=PATH",   "include path",
                        operate=(lambda optval, optdict:
                                   optdict.setdefault('include', []).append(optval))),
@@ -562,7 +562,7 @@ class Application_TC(unittest.TestCase):
         @app.option("-p",   "print content")
         @app.option("-d, --date=DATE", "date (YYYY-MM-DD)",
                     validation=lambda val: re.match(r'^\d\d\d\d-\d\d-\d\d$', val) or "YYYY-MM-DD expected",
-                    convert=lambda val: datetime.strptime(val, '%Y-%m-%d').date())
+                    conversion=lambda val: datetime.strptime(val, '%Y-%m-%d').date())
         def do_history(*args, **opts):
             app._result = ("history", args, opts)
             return 0

@@ -141,10 +141,10 @@ class Application(object):
             return func
         return deco
 
-    def option(self, optdef, desc, _=None, argtype=None, validation=None, convert=None, operate=None):
+    def option(self, optdef, desc, _=None, argtype=None, validation=None, conversion=None, operate=None):
         #; [!xpj0j] creates new Option object and keeps it internally.
         option = Option.new(optdef, desc, argtype=argtype, validation=validation,
-                            convert=convert, operate=operate)
+                            conversion=conversion, operate=operate)
         self._curr_options.append(option)
         #; [!jgzmw] returns decorator to set Option objects into function.
         def deco(func):
@@ -559,7 +559,7 @@ class Option(object):
 
     def __init__(self, short, long, desc, canonical=None,
                  arg_name=None, arg_required=None, arg_type=None,
-                 validation=None, convert=None, operate=None):
+                 validation=None, conversion=None, operate=None):
         self.short = short
         self.long  = long
         self.desc  = desc
@@ -568,7 +568,7 @@ class Option(object):
         self.arg_required = arg_required
         self.arg_type     = arg_type
         self.validation   = validation
-        self.convert      = convert
+        self.conversion   = conversion
         self.operate      = operate
 
     @property
@@ -578,7 +578,7 @@ class Option(object):
     def __repr__(self):
         attrs = ('short', 'long', 'canonical', 'desc',
                  'arg_name', 'arg_required', 'arg_type',
-                 'validation', 'convert', 'action')
+                 'validation', 'conversion', 'action')
         buf = ["<", self.__class__.__name__]
         for k in attrs:
             v = getattr(self, k)
@@ -588,14 +588,14 @@ class Option(object):
         return "".join(buf)
 
     @classmethod
-    def new(cls, optdef, desc, argtype=None, validation=None, convert=None, operate=None):
+    def new(cls, optdef, desc, argtype=None, validation=None, conversion=None, operate=None):
         #; [!8s9ue] parses option definition string.
         tupl = cls.parse(optdef)
         short, long, arg_name, arg_required = tupl
         #; [!k25na] returns new Option object.
         return cls(short, long, desc,
                    arg_name=arg_name, arg_required=arg_required, arg_type=argtype,
-                   validation=validation, convert=convert, operate=operate)
+                   validation=validation, conversion=conversion, operate=operate)
 
     @staticmethod
     def parse(optdef):
@@ -632,8 +632,8 @@ class Option(object):
                 errmsg = fn(optval)
                 if isinstance(errmsg, _string):
                     return optval, errmsg
-        if self.convert:
-            optval = self.convert(optval)
+        if self.conversion:
+            optval = self.conversion(optval)
         return optval, None
 
     def format(self):
