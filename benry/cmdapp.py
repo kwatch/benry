@@ -487,13 +487,13 @@ class Action(object):
         #; [!zohvj] includes script name, action name and description.
         add("%s%s - %s\n" % (script_name, action_str, self.desc))
         #; [!98tyn] adds document if function has it.
-        add(self.format_funcdoc() or "")
+        add(self.format_funcdoc(indent=indent) or "")
         #; [!e8ps2] includes usage of action.
         options_doc = self.format_options(width=width, indent=indent, sep=sep)
         add("Usage:\n")
         add("%s%s%s%s%s\n" % (" " * indent, script_name, action_str,
-                               " [options]" if options_doc else "",
-                               " "+self.argdef if self.argdef else ""))
+                              " [options]" if options_doc else "",
+                              " "+self.argdef if self.argdef else ""))
         #; [!kb62s] includes help message of options.
         if options_doc:
             add("Options:\n")
@@ -508,13 +508,13 @@ class Action(object):
                             for opt in self.options if opt.desc )
         return text
 
-    def format_funcdoc(self, indent="  "):
+    def format_funcdoc(self, indent=2):
         doc = self.func.__doc__
         if not doc:
             return ""
         m = re.compile(r'^([ \t]+)', re.M).search(doc)
         original_indent = m.group(1) if m else ""
-        doc = re.compile(r'^'+original_indent, re.M).sub(indent, doc)
+        doc = re.compile(r'^'+original_indent, re.M).sub(" " * indent, doc)
         if not doc.endswith("\n"):
             doc += "\n"
         return doc
