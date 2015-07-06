@@ -73,6 +73,7 @@ class Action_TC(unittest.TestCase):
             action = Action.new("test", "do test command", lambda: None, [])
             ok (action.help_message("myscript")) == r"""
 myscript test - do test command
+
 Usage:
   myscript test
 """[1:]
@@ -84,6 +85,7 @@ Usage:
             action = Action.new("test [arg]", "do test command", func, [])
             ok (action.help_message("myscript")) == r"""
 myscript test - do test command
+
 Usage:
   myscript test [arg]
 """[1:]
@@ -105,6 +107,7 @@ Usage:
             action = Action.new("test [name]", "do test command", func, [])
             ok (action.help_message("myscript", print_action=False)) == r"""
 myscript - do test command
+
 Usage:
   myscript [name]
 """[1:]
@@ -126,6 +129,7 @@ myscript test - do test command
   BBB
 
   CCC
+
 Usage:
   myscript test
 """[1:]
@@ -137,6 +141,7 @@ Usage:
             action = Action.new("test [name]", "do test command", func, [])
             ok (action.help_message("myscript")) == r"""
 myscript test - do test command
+
 Usage:
   myscript test [name]
 """[1:]
@@ -153,8 +158,10 @@ Usage:
             action = Action.new("test [name]", "do test command", func, optdefs)
             ok (action.help_message("myscript")) == r"""
 myscript test - do test command
+
 Usage:
   myscript test [options] [name]
+
 Options:
   -h, --help                    : show help
   -f, --file=FILE               : filename
@@ -888,8 +895,10 @@ class App_TC(unittest.TestCase):
         def _(self, app):
             expected = r"""
 hello  - print hello world
+
 Usage:
   hello <action> [<options>] [<args>...]
+
 Actions:
   help       : print help
 """[1:]
@@ -901,6 +910,7 @@ Actions:
             expected = r"""
 Usage:
   hello <action> [<options>] [<args>...]
+
 Actions:
   help       : print help
 """[1:]
@@ -954,8 +964,10 @@ Actions:
             #
             expected = r"""
 hello history - show history
+
 Usage:
   hello history [options]
+
 Options:
   -d, --date=DATE               : date (YYYY-MM-DD)
 """[1:]
@@ -972,6 +984,7 @@ Options:
             app = App("hello", "print 'Hello world' message")
             s = app.help_message()
             ok (s).should.startswith("hello  - print 'Hello world' message\n" +
+                                     "\n" +
                                      "Usage:\n" +
                                      "  hello ")
 

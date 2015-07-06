@@ -315,10 +315,12 @@ class App(Application):
         script_name = self.script_name
         if self.desc:
             add("%s  - %s\n" % (script_name, self.desc))
+            add("\n")
         width = self._preferred_width()
         format = "  %-" + str(width) + "s : %s\n"
         add("Usage:\n")
         add("  %s <action> [<options>] [<args>...]\n" % script_name)
+        add("\n")
         add("Actions:\n")
         size = len(buf)
         for x in sorted(self._action_list, key=lambda x: x.name):
@@ -489,15 +491,20 @@ class Action(object):
         if self.desc is not None:
             add("%s%s - %s\n" % (script_name, action_str, self.desc))
         #; [!98tyn] adds document if function has it.
-        add(self.format_funcdoc(indent=indent) or "")
+        func_doc = self.format_funcdoc(indent=indent)
+        if func_doc:
+            add(self.format_funcdoc(indent=indent))
         #; [!e8ps2] includes usage of action.
         options_doc = self.format_options(width=width, indent=indent, sep=sep)
+        if buf:
+            add("\n")
         add("Usage:\n")
         add("%s%s%s%s%s\n" % (" " * indent, script_name, action_str,
                               " [options]" if options_doc else "",
                               " "+self.argdef if self.argdef else ""))
         #; [!kb62s] includes help message of options.
         if options_doc:
+            add("\n")
             add("Options:\n")
             add(options_doc)
         #; [!ccl90] returns help message of action.
