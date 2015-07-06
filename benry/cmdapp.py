@@ -480,16 +480,18 @@ class Action(object):
         #; [!tm64g] invokes func with arguments.
         return self.func(*args, **kwargs)
 
-    def help_message(self, script_name, width=30, indent=2, sep=': '):
+    def help_message(self, script_name, width=30, indent=2, sep=': ', print_action=True):
         buf = []; add = buf.append
+        #; [!rmrd7] don't print action when print_action arg is falthy.
+        action_str = " " + self.name if print_action else ""
         #; [!zohvj] includes script name, action name and description.
-        add("%s %s - %s\n" % (script_name, self.name, self.desc))
+        add("%s%s - %s\n" % (script_name, action_str, self.desc))
         #; [!98tyn] adds document if function has it.
         add(self.format_funcdoc() or "")
         #; [!e8ps2] includes usage of action.
         options_doc = self.format_options(width=width, indent=indent, sep=sep)
         add("Usage:\n")
-        add("%s%s %s%s%s\n" % (" " * indent, script_name, self.name,
+        add("%s%s%s%s%s\n" % (" " * indent, script_name, action_str,
                                " [options]" if options_doc else "",
                                " "+self.argdef if self.argdef else ""))
         #; [!kb62s] includes help message of options.

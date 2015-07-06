@@ -88,6 +88,17 @@ Usage:
   myscript test
 """[1:]
 
+        @test("[!rmrd7] don't print action when print_action arg is falthy.")
+        def _(self):
+            def func(name=None):
+                pass
+            action = Action.new("test [name]", "do test command", func, [])
+            ok (action.help_message("myscript", print_action=False)) == r"""
+myscript - do test command
+Usage:
+  myscript [name]
+"""[1:]
+
         @test("[!98tyn] adds document if function has it.")
         def _(self):
             def func(arg):
