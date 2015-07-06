@@ -23,10 +23,10 @@ Example script (filename: 'myhello')::
     ## register sub-command
     @action("hello [name]", "print hello world")
     @option("-i, --indent[=N]", "indent width (default 0)",
-            validate=[
-              lambda val: val.isdigit() or "integer expected",
-              lambda val: int(val) >= 0 or "positive value expected",
-            ])
+            validation=lambda val: (
+                not val.isdigit() and "integer expected"
+                or int(val) <= 0 and "positive value expected"
+            ))
     def do_hello(name='world', _=None, indent=0):
         indent = int(indent)
         msg = "Hello %s!" % name
@@ -141,9 +141,9 @@ class Application(object):
             return func
         return deco
 
-    def option(self, optdef, desc, _=None, argtype=None, validate=None, convert=None, operate=None):
+    def option(self, optdef, desc, _=None, argtype=None, validation=None, convert=None, operate=None):
         #; [!xpj0j] creates new Option object and keeps it internally.
-        option = Option.new(optdef, desc, argtype=argtype, validate=validate,
+        option = Option.new(optdef, desc, argtype=argtype, validation=validation,
                             convert=convert, operate=operate)
         self._curr_options.append(option)
         #; [!jgzmw] returns decorator to set Option objects into function.
@@ -559,7 +559,7 @@ class Option(object):
 
     def __init__(self, short, long, desc, canonical=None,
                  arg_name=None, arg_required=None, arg_type=None,
-                 validate=None, convert=None, operate=None):
+                 validation=None, convert=None, operate=None):
         self.short = short
         self.long  = long
         self.desc  = desc
@@ -567,7 +567,7 @@ class Option(object):
         self.arg_name     = arg_name
         self.arg_required = arg_required
         self.arg_type     = arg_type
-        self.validate     = validate
+        self.validation   = validation
         self.convert      = convert
         self.operate      = operate
 
@@ -578,7 +578,7 @@ class Option(object):
     def __repr__(self):
         attrs = ('short', 'long', 'canonical', 'desc',
                  'arg_name', 'arg_required', 'arg_type',
-                 'validate', 'convert', 'action')
+                 'validation', 'convert', 'action')
         buf = ["<", self.__class__.__name__]
         for k in attrs:
             v = getattr(self, k)
@@ -588,14 +588,14 @@ class Option(object):
         return "".join(buf)
 
     @classmethod
-    def new(cls, optdef, desc, argtype=None, validate=None, convert=None, operate=None):
+    def new(cls, optdef, desc, argtype=None, validation=None, convert=None, operate=None):
         #; [!8s9ue] parses option definition string.
         tupl = cls.parse(optdef)
         short, long, arg_name, arg_required = tupl
         #; [!k25na] returns new Option object.
         return cls(short, long, desc,
                    arg_name=arg_name, arg_required=arg_required, arg_type=argtype,
-                   validate=validate, convert=convert, operate=operate)
+                   validation=validation, convert=convert, operate=operate)
 
     @staticmethod
     def parse(optdef):
@@ -623,11 +623,11 @@ class Option(object):
         raise OptionDefinitionError("%s: invalid option definition." % optdef)
 
     def handle_value(self, optval):
-        if self.validate:
-            if isinstance(self.validate, (tuple, list)):
-                validators = self.validate
+        if self.validation:
+            if isinstance(self.validation, (tuple, list)):
+                validators = self.validation
             else:
-                validators = [self.validate]
+                validators = [self.validation]
             for fn in validators:
                 errmsg = fn(optval)
                 if isinstance(errmsg, _string):

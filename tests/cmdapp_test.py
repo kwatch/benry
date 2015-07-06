@@ -206,16 +206,16 @@ class Option_TC(unittest.TestCase):
 
         @test("[!8s9ue] parses option definition string.")
         def _(self):
-            fn_validate = lambda val: val.isdigit() or "integer requried."
+            fn_validation = lambda val: val.isdigit() or "integer requried."
             fn_convert  = lambda val: 2 if val is True else int(val)
             fn_operate  = lambda val, opts: opts.__setitem__('indent', val)
             ret = Option.new("-i, --indent[=d]", "indent (default 2)",
-                             validate=fn_validate, convert=fn_convert, operate=fn_operate)
+                             validation=fn_validation, convert=fn_convert, operate=fn_operate)
             ok (ret).attr("short", "i").attr("long", "indent").attr("desc", "indent (default 2)")
             ok (ret.arg_name) == "d"
             ok (ret.arg_required) == False
             ok (ret.arg_type) == None
-            ok (ret.validate) == fn_validate
+            ok (ret.validation) == fn_validation
             ok (ret.convert)  == fn_convert
             ok (ret.operate)  == fn_operate
 
@@ -292,14 +292,14 @@ class OptionParser_TC(unittest.TestCase):
             Option.new("-v, --version",       "print version"),
             Option.new("-f, --file=FILE",     "filename"),
             Option.new("-i, --indent[=num]",  "indent (default 2)",
-                       validate=lambda val: val is True or val.isdigit() or "integer expected."),
+                       validation=lambda val: val is True or val.isdigit() or "integer expected."),
             Option.new("-D, --debug[=level]", "debug level (default 1)",
-                       validate=[
+                       validation=[
                            lambda val: val is True or val.isdigit() or "integer expected.",
                            lambda val: 1 <= int(val) <= 3  or "out of range (expected 1..3).",
                        ]),
             Option.new("-d, --date=DATE",     "date (YYYY-MM-DD)",
-                       validate=lambda val: re.match(r'^\d\d\d\d-\d\d-\d\d$', val) or "YYYY-MM-DD expected",
+                       validation=lambda val: re.match(r'^\d\d\d\d-\d\d-\d\d$', val) or "YYYY-MM-DD expected",
                        convert=lambda val: datetime.strptime(val, '%Y-%m-%d').date()),
             Option.new("-I, --include=PATH",   "include path",
                        operate=(lambda optval, optdict:
@@ -550,9 +550,9 @@ class Application_TC(unittest.TestCase):
         @app.option("-h, --help",         "show help")
         @app.option("-f, --file=FILE",    "filename")
         @app.option("-i, --indent[=num]", "indent (default 2)",
-             validate=lambda val: val is True or val.isdigit() or "integer expected.")
+             validation=lambda val: val is True or val.isdigit() or "integer expected.")
         @app.option("-D, --debug[=level]", "debug level (default 1)",
-             validate=[lambda val: val is True or val.isdigit() or "integer expected.",
+             validation=[lambda val: val is True or val.isdigit() or "integer expected.",
                        lambda val: 1 <= int(val) <= 3  or "out of range (expected 1..3)."])
         def do_convert(*args, **opts):
             app._result = ("convert", args, opts)
@@ -561,7 +561,7 @@ class Application_TC(unittest.TestCase):
         @app.action("history", "show history", alias="hist")
         @app.option("-p",   "print content")
         @app.option("-d, --date=DATE", "date (YYYY-MM-DD)",
-                    validate=lambda val: re.match(r'^\d\d\d\d-\d\d-\d\d$', val) or "YYYY-MM-DD expected",
+                    validation=lambda val: re.match(r'^\d\d\d\d-\d\d-\d\d$', val) or "YYYY-MM-DD expected",
                     convert=lambda val: datetime.strptime(val, '%Y-%m-%d').date())
         def do_history(*args, **opts):
             app._result = ("history", args, opts)
