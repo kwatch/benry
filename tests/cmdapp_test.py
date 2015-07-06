@@ -122,12 +122,10 @@ Usage:
             action = Action.new("test", "do test command", func, [])
             ok (action.help_message("myscript")) == r"""
 myscript test - do test command
-
   AAA
   BBB
 
   CCC
-  
 Usage:
   myscript test
 """[1:]

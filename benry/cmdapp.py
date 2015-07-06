@@ -514,11 +514,14 @@ class Action(object):
         doc = self.func.__doc__
         if not doc:
             return ""
+        if doc.startswith("\n"):
+            doc = doc[1:]
+        doc = re.sub(r"\n\s+$", "\n", doc)
+        if not doc.endswith("\n"):
+            doc += "\n"
         m = re.compile(r'^([ \t]+)', re.M).search(doc)
         original_indent = m.group(1) if m else ""
         doc = re.compile(r'^'+original_indent, re.M).sub(" " * indent, doc)
-        if not doc.endswith("\n"):
-            doc += "\n"
         return doc
 
 
