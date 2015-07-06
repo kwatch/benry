@@ -141,10 +141,10 @@ class Application(object):
             return func
         return deco
 
-    def option(self, optdef, desc, _=None, argtype=None, validation=None, conversion=None, operate=None):
+    def option(self, optdef, desc, _=None, argtype=None, validation=None, conversion=None, operation=None):
         #; [!xpj0j] creates new Option object and keeps it internally.
         option = Option.new(optdef, desc, argtype=argtype, validation=validation,
-                            conversion=conversion, operate=operate)
+                            conversion=conversion, operation=operation)
         self._curr_options.append(option)
         #; [!jgzmw] returns decorator to set Option objects into function.
         def deco(func):
@@ -411,8 +411,8 @@ class OptionParser(object):
         if errmsg:
             error("%s: %s" % (optstr, errmsg))
         #; [!x2rbq] operates long option value when operator specified to option definition.
-        if optdef.operate:
-            optdef.operate(optval, optdict)
+        if optdef.operation:
+            optdef.operation(optval, optdict)
         else:
             optdict[optdef.name] = optval
 
@@ -452,8 +452,8 @@ class OptionParser(object):
                 if optval is True: error("-%s: %s" % (optch, errmsg))
                 else:              error("-%s %s: %s" % (optch, optval, errmsg))
             #; [!dv250] operates short option value when operator specified to option definition.
-            if optdef.operate:
-                optdef.operate(optval, optdict)
+            if optdef.operation:
+                optdef.operation(optval, optdict)
             else:
                 optdict[optdef.name] = optval
         #
@@ -559,7 +559,7 @@ class Option(object):
 
     def __init__(self, short, long, desc, canonical=None,
                  arg_name=None, arg_required=None, arg_type=None,
-                 validation=None, conversion=None, operate=None):
+                 validation=None, conversion=None, operation=None):
         self.short = short
         self.long  = long
         self.desc  = desc
@@ -569,7 +569,7 @@ class Option(object):
         self.arg_type     = arg_type
         self.validation   = validation
         self.conversion   = conversion
-        self.operate      = operate
+        self.operation    = operation
 
     @property
     def name(self):
@@ -588,14 +588,14 @@ class Option(object):
         return "".join(buf)
 
     @classmethod
-    def new(cls, optdef, desc, argtype=None, validation=None, conversion=None, operate=None):
+    def new(cls, optdef, desc, argtype=None, validation=None, conversion=None, operation=None):
         #; [!8s9ue] parses option definition string.
         tupl = cls.parse(optdef)
         short, long, arg_name, arg_required = tupl
         #; [!k25na] returns new Option object.
         return cls(short, long, desc,
                    arg_name=arg_name, arg_required=arg_required, arg_type=argtype,
-                   validation=validation, conversion=conversion, operate=operate)
+                   validation=validation, conversion=conversion, operation=operation)
 
     @staticmethod
     def parse(optdef):

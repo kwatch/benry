@@ -208,16 +208,16 @@ class Option_TC(unittest.TestCase):
         def _(self):
             fn_validation = lambda val: val.isdigit() or "integer requried."
             fn_conversion = lambda val: 2 if val is True else int(val)
-            fn_operate  = lambda val, opts: opts.__setitem__('indent', val)
+            fn_operation  = lambda val, opts: opts.__setitem__('indent', val)
             ret = Option.new("-i, --indent[=d]", "indent (default 2)",
-                             validation=fn_validation, conversion=fn_conversion, operate=fn_operate)
+                             validation=fn_validation, conversion=fn_conversion, operation=fn_operation)
             ok (ret).attr("short", "i").attr("long", "indent").attr("desc", "indent (default 2)")
             ok (ret.arg_name) == "d"
             ok (ret.arg_required) == False
             ok (ret.arg_type) == None
             ok (ret.validation) == fn_validation
             ok (ret.conversion) == fn_conversion
-            ok (ret.operate)  == fn_operate
+            ok (ret.operation)  == fn_operation
 
 
     with subject(".#parse()"):
@@ -302,7 +302,7 @@ class OptionParser_TC(unittest.TestCase):
                        validation=lambda val: re.match(r'^\d\d\d\d-\d\d-\d\d$', val) or "YYYY-MM-DD expected",
                        conversion=lambda val: datetime.strptime(val, '%Y-%m-%d').date()),
             Option.new("-I, --include=PATH",   "include path",
-                       operate=(lambda optval, optdict:
+                       operation=(lambda optval, optdict:
                                   optdict.setdefault('include', []).append(optval))),
 
         ]
