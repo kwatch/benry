@@ -487,16 +487,15 @@ class Action(object):
         #; [!98tyn] adds document if function has it.
         add(self.format_funcdoc() or "")
         #; [!e8ps2] includes usage of action.
-        argdef_str = " "+self.argdef if self.argdef else ""
+        options_doc = self.format_options(width=width, indent=indent, sep=sep)
         add("Usage:\n")
-        if self.options:
-            add("  %s %s [options]%s\n" % (script_name, self.name, argdef_str))
-        else:
-            add("  %s %s%s\n" % (script_name, self.name, argdef_str))
+        add("%s%s %s%s%s\n" % (" " * indent, script_name, self.name,
+                               " [options]" if options_doc else "",
+                               " "+self.argdef if self.argdef else ""))
         #; [!kb62s] includes help message of options.
-        if self.options:
+        if options_doc:
             add("Options:\n")
-            add(self.format_options(width=width, indent=indent, sep=sep))
+            add(options_doc)
         #; [!ccl90] returns help message of action.
         return "".join(buf)
 
