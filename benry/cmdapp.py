@@ -385,6 +385,11 @@ class SimpleApp(Application):
             raise OptionDefinitionError("@app() should be called before app.main().")
         #; [!tij3s] runs without action name.
         optdict = self._parse_options(args, action.options)
+        #
+        if 'help' in optdict:
+            help_msg = self._handle_help_option(action, args, optdict)
+            return help_msg
+        #
         errmsg = self._validate_args(action.func, args)
         if errmsg:
             error(errmsg)
