@@ -547,7 +547,7 @@ class Application_TC(unittest.TestCase):
         result = []
         #
         @app.action("convert", "convert text into html")
-        @app.option("-h, --help",         "show help")
+        @app.option("-s, --strip",        "strip spaces")
         @app.option("-f, --file=FILE",    "filename")
         @app.option("-i, --indent[=num]", "indent (default 2)",
              validation=lambda val: val is True or val.isdigit() or "integer expected.")
@@ -731,7 +731,7 @@ class Application_TC(unittest.TestCase):
         @test("[!rja97] parses long options of action.")
         def _(self, app):
             argv = ["convert",
-                    "--help",             # no arg
+                    "--strip",            # no arg
                     "--file=file.txt",    # required arg
                     "--indent=4",         # optional arg
                     "--debug",            # optional arg
@@ -739,13 +739,13 @@ class Application_TC(unittest.TestCase):
             status = app.run(*argv)
             ok (app._result[0]) == "convert"
             ok (app._result[1]) == ("arg1", "arg2")
-            ok (app._result[2]) == {"help": True, "file": "file.txt", "indent": "4", "debug": True}
+            ok (app._result[2]) == {"strip": True, "file": "file.txt", "indent": "4", "debug": True}
             ok (status) == 0
 
         @test("[!ymcnv] parses short options of action.")
         def _(self, app):
             argv = ["convert",
-                    "-h",                # no arg
+                    "-s",                # no arg
                     "-f", "file.txt",    # required arg
                     "-i4",               # optional arg
                     "-D",                # optional arg
@@ -753,20 +753,20 @@ class Application_TC(unittest.TestCase):
             status = app.run(*argv)
             ok (app._result[0]) == "convert"
             ok (app._result[1]) == ("arg1", "arg2")
-            ok (app._result[2]) == {"help": True, "file": "file.txt", "indent": "4", "debug": True}
+            ok (app._result[2]) == {"strip": True, "file": "file.txt", "indent": "4", "debug": True}
             ok (status) == 0
             #
-            argv = ["convert", "-hffile.txt", "arg1", "arg2"]
+            argv = ["convert", "-sffile.txt", "arg1", "arg2"]
             status = app.run(*argv)
             ok (app._result[0]) == "convert"
             ok (app._result[1]) == ("arg1", "arg2")
-            ok (app._result[2]) == {"help": True, "file": "file.txt"}
+            ok (app._result[2]) == {"strip": True, "file": "file.txt"}
             #
-            argv = ["convert", "-hi4", "arg1", "arg2"]
+            argv = ["convert", "-si4", "arg1", "arg2"]
             status = app.run(*argv)
             ok (app._result[0]) == "convert"
             ok (app._result[1]) == ("arg1", "arg2")
-            ok (app._result[2]) == {"help": True, "indent": "4"}
+            ok (app._result[2]) == {"strip": True, "indent": "4"}
 
 
         def provide_app2(self):
