@@ -974,6 +974,48 @@ Actions:
             def fn(): app.run("-")
             ok (fn).raises(CommandOptionError, "-: unknown action.")
 
+        with situation("[!dsznt] when '--help' option specified..."):
+
+            def provide_app3(self):
+                app = App("test")
+                #
+                @app.action("hello1 name", "print hello world")
+                @app.option("-h, --help", "show help")
+                @app.option("-v, --version", "print version")
+                def do_hello1(name, _=None, help=False, version=False):  # with 'help' arg
+                    ## 'name' arg is required, but None is set automatically when '--help'.
+                    return {"name": name, "help": help, "version": version}
+                #
+                @app.action("hello2 name", "print hello world")
+                @app.option("-h, --help", "show help")
+                @app.option("-v, --version", "print version")
+                def do_hello2(name, _=None, version=False):   # without 'help' arg
+                    ## this code will not be called when '--help'.
+                    return {"name": name, "version": version}
+                #
+                return app
+
+            @test("[!ztnka] not raise argument error even when arg is required.")
+            def _(self, app3):
+                def fn(): return app3.run("hello1", "--help")
+                ok (fn).not_raise(Exception)
+                ret = fn()
+                ok (ret) == {"name": None, "help": True, "version": False}
+
+            @test("[!atjyn] prints help message automatically when no keyword arg 'help'.")
+            def _(self, app3):
+                ret = app3.run("hello2", "--help", "world")
+                ok (ret) == r"""
+test hello2 - print hello world
+
+Usage:
+  test hello2 [<options>] name
+
+Options:
+  -h, --help                    : show help
+  -v, --version                 : print version
+"""[1:]
+
 
     with subject("#do_help()"):
 

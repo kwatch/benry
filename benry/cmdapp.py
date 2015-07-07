@@ -225,6 +225,11 @@ class Application(object):
         #; [!rja97] parses long options of action.
         #; [!ymcnv] parses short options of action.
         optdict = self._parse_options(args, action.options)
+        #; [!dsznt] when '--help' option specified...
+        if 'help' in optdict:
+            help_msg = self._handle_help_option(action, args, optdict)
+            return help_msg
+        #
         errmsg = self._validate_args(action.func, args)
         if errmsg:
             #error("%s: %s" % (action.name, errmsg))
@@ -234,6 +239,18 @@ class Application(object):
 
     def _parse_options(self, args, optdefs):
         return OptionParser(optdefs).parse(args)
+
+    def _handle_help_option(self, action, args, optdict):
+        arg_names, kwarg_names = func_split_argnames(action.func)
+        #; [!ztnka] not raise argument error even when arg is required.
+        if 'help' in kwarg_names:
+            nones = (None,) * (len(arg_names)+len(args))
+            args.extend(nones)
+            help_msg = action.func(*args, **optdict)
+        #; [!atjyn] prints help message automatically when no keyword arg 'help'.
+        else:
+            help_msg = action.help_message(self.script_name)
+        return help_msg
 
     def _validate_args(self, func, args):
         #; [!giakv] regards args after '_' as keyword-only args.
