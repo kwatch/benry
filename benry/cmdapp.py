@@ -107,6 +107,26 @@ def func_has_variable_length_argument(func):
     return func.__code__.co_flags & 0x04
 
 
+def func_split_argnames(func):
+    """Split argument names to positional args and keyword args.
+    ex:
+       def fn(a, b=0, _=None, c=0):
+         x = a+b+c
+         return x
+       print(func_split_argnames(fn)) #=> (('a', 'b'), ('c',))
+    """
+    kwonlyargcount = getattr(func.__code__, 'co_kwonlyargcount', 0)
+    arg_count = func.__code__.co_argcount + kwonlyargcount
+    arg_names = func.__code__.co_varnames[:arg_count]
+    defaults_count = len(_func_defaults(func) or {})
+    #; [!8eter] considers '_' as argument separator.
+    if   '_' in arg_names:   i, idx = 1, arg_names.index('_')+1
+    elif kwonlyargcount > 0: i, idx = 0, -kwonlyargcount
+    else:                    i, idx = 0, -defaults_count or len(arg_names)
+    #; [!94hgl] returns positional arg names and keyword arg names.
+    return arg_names[:idx-i], arg_names[idx:]
+
+
 class Application(object):
     """Command-line application."""
 

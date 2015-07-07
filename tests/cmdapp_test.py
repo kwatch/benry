@@ -12,6 +12,7 @@ from benry.cmdapp import (
     Application, App, SimpleApp, Action, CommandOptionError,
     Option, OptionParser, OptionDefinitionError,
     find_by, find_index, _B,
+    func_split_argnames,
 )
 
 
@@ -537,6 +538,27 @@ class funcs_TC(unittest.TestCase):
         def _(self):
             ret = find_index([10, 20, 30, 40, 50, 60], lambda x: x % 7 == 0)
             ok (ret) == -1
+
+
+    with subject("func_split_argnames()"):
+
+        @test("[!94hgl] returns positional arg names and keyword arg names.")
+        def _(self):
+            def fn1(a, b, c=0, d=0): pass
+            ok (func_split_argnames(fn1)) == (('a', 'b'), ('c', 'd'))
+            def fn2(a, b): pass
+            ok (func_split_argnames(fn2)) == (('a', 'b'), ())
+            def fn3(c=0, d=0): pass
+            ok (func_split_argnames(fn3)) == ((), ('c', 'd'))
+
+        @test("[!8eter] considers '_' as argument separator.")
+        def _(self):
+            def fn1(a, b, _=None, c=0, d=0): pass
+            ok (func_split_argnames(fn1)) == (('a', 'b'), ('c', 'd'))
+            def fn2(a, b, c=0, _=None, d=0): pass
+            ok (func_split_argnames(fn2)) == (('a', 'b', 'c'), ('d',))
+            def fn3(_=None, c=0, d=0): pass
+            ok (func_split_argnames(fn3)) == ((), ('c', 'd'))
 
 
 
