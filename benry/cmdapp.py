@@ -37,33 +37,15 @@ Example script (filename: 'myhello')::
     if __name__ == '__main__':
         app.main()
 
-Output example::
+Usage example::
 
     $ chmod a+x ./myhello
-    $ ./myhello                   # same as ./myhello help
-    myhello  - example script
-
-    Usage:
-      myhello <action> [<options>] [<args>...]
-
-    Actions:
-      hello      : print hello world
-      help       : print help
-
-    $ ./myhello help hello
-    myhello hello - print hello world
-
-    Usage:
-      myhello hello [<options>] [name]
-
-    Options:
-      -i, --indent[=N]              : indent width (default 0)
-
-    $ ./myhello hello
-    Hello world!
-
-    $ ./myhello hello -i4 "John Smith"
-    Hello John Smith!
+    $ ./myhello help            # list all actions
+    $ ./myhello help hello      # show help of 'hello' action
+    $ ./myhello --help          # same as ./myhello help
+    $ ./myhello                 # same as ./myhello help
+    $ ./myhello hello           # run 'hello' action
+    $ ./myhello hello -i4 John  # run with option and argument
 
 """
 
