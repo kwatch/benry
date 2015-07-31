@@ -51,7 +51,7 @@ Usage example::
 
 __version__ = "$Release: 0.0.0 $".split()[1]
 __all__ = (
-    'App', 'Application', 'OptionParser', 'Action', 'Option',
+    'App', 'Application', 'SimpleApp', 'OptionParser', 'Action', 'Option',
     'error', 'CommandOptionError', 'OptionDefinitionError',
 )
 
@@ -323,6 +323,41 @@ class App(Application):
             max_width = min(max_len, max_width)
         width = max(max_width, min_width)
         return width
+
+
+class SimpleApp(Application):
+    """Application class without actions."""
+
+    def __init__(self, name=None, desc=None):
+        #; [!qb6e4] 'default' argument is not available.
+        Application.__init__(self, name, desc, default="<action>")
+
+    def action(self, *args, **kwargs):
+        #; [!lfjdq] raises error because not available.
+        raise OptionDefinitionError("Use @app() instead of @app.action() for SimpleApp class.")
+
+    def __call__(self, argdef=None):
+        #; [!nfgyx] same as '@app.action("<action> argdef", desc)'.
+        cmddef = "%s %s" % (self.default, argdef or "")
+        return Application.action(self, cmddef, self.desc)
+
+    def _run(self, args):
+        #; [!960mf] raises error when '@app()' is not called yet.
+        action = self.find_action(self.default)
+        if action is None:
+            raise OptionDefinitionError("@app() should be called before app.main().")
+        #; [!tij3s] runs without action name.
+        optdict = self._parse_options(args, action.options)
+        errmsg = self._validate_args(action.func, args)
+        if errmsg:
+            error(errmsg)
+        output = action.func(*args, **optdict)
+        return output
+
+    def help_message(self, _=None, width=30, indent=2, sep=': '):
+        #; [!4uki2] builds help message and returns it.
+        action = self.find_action(self.default)
+        return action.help_message(self.script_name, width=width, indent=indent, sep=sep, print_action=False)
 
 
 class OptionParser(object):

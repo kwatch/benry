@@ -9,7 +9,7 @@ from oktest.dummy import dummy_io
 
 
 from benry.cmdapp import (
-    Application, App, Action, CommandOptionError,
+    Application, App, SimpleApp, Action, CommandOptionError,
     Option, OptionParser, OptionDefinitionError,
     find_by, find_index, _B,
 )
@@ -987,6 +987,86 @@ Options:
                                      "\n" +
                                      "Usage:\n" +
                                      "  hello ")
+
+
+
+class SimpleApp_TC(unittest.TestCase):
+
+    def provide_app(self):
+        app = SimpleApp("hello", "print hello world")
+        @app("[name]")
+        @app.option("-h, --help", "show help")
+        @app.option("-v, --version", "print version")
+        @app.option("-D, --debug[=level]", "debug mode")
+        def _(name=None, _=None, help=False, version=False, debug=None):
+            if help:
+                return app.help_message()
+            return {"name": name, "help": help, "version": version, "debug": debug}
+        return app
+
+
+    with subject("#__init__()"):
+
+        @test("[!qb6e4] 'default' argument is not available.")
+        def _(self):
+            def fn(): SimpleApp("hello", "print hellow world", default="help")
+            ok (fn).raises(TypeError, "__init__() got an unexpected keyword argument 'default'")
+
+
+    with subject("#action()"):
+
+        @test("[!lfjdq] raises error because not available.")
+        def _(self, app):
+            def fn():
+                @app.action("list", "do list")
+                def do_list():
+                    pass
+            ok (fn).raises(OptionDefinitionError, "Use @app() instead of @app.action() for SimpleApp class.")
+
+
+    with subject("#__call__()"):
+
+        @test("[!nfgyx] same as '@app.action(\"<action> argdef\", desc)'.")
+        def _(self, app):
+            action = app.find_action("<action>")
+            ok (action) != None
+            ok (action.name) == "<action>"
+
+
+    with subject("#run()"):
+
+        @test("[!960mf] raises error when '@app()' is not called yet.")
+        def _(self):
+            app = SimpleApp("hello", "print hello")
+            def fn():
+                app.run("hello")
+            ok (fn).raises(OptionDefinitionError, "@app() should be called before app.main().")
+
+        @test("[!tij3s] runs without action name.")
+        def _(self, app):
+            ret = app.run("World")
+            ok (ret) == {"name": "World", "help": False, "version": False, "debug": None}
+            ret = app.run("-vD2", "Smith")
+            ok (ret) == {"name": "Smith", "help": False, "version": True, "debug": "2"}
+
+
+    with subject("#help_message()"):
+
+        @test("[!4uki2] builds help message and returns it.")
+        def _(self, app):
+            expected = r"""
+hello - print hello world
+
+Usage:
+  hello [<options>] [name]
+
+Options:
+  -h, --help                    : show help
+  -v, --version                 : print version
+  -D, --debug[=level]           : debug mode
+"""[1:]
+            ok (app.help_message()) == expected
+            ok (app.run("-h")) == expected
 
 
 
