@@ -160,7 +160,7 @@ Usage:
 myscript test - do test command
 
 Usage:
-  myscript test [options] [name]
+  myscript test [<options>] [name]
 
 Options:
   -h, --help                    : show help
@@ -966,7 +966,7 @@ Actions:
 hello history - show history
 
 Usage:
-  hello history [options]
+  hello history [<options>]
 
 Options:
   -d, --date=DATE               : date (YYYY-MM-DD)

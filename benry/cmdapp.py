@@ -42,15 +42,20 @@ Output example::
     $ chmod a+x ./myhello
     $ ./myhello                   # same as ./myhello help
     myhello  - example script
-    Usage: myhello <action> [<options>] [<args>...]
+
+    Usage:
+      myhello <action> [<options>] [<args>...]
+
     Actions:
       hello      : print hello world
       help       : print help
 
     $ ./myhello help hello
     myhello hello - print hello world
+
     Usage:
-      myhello hello [options] [name]
+      myhello hello [<options>] [name]
+
     Options:
       -i, --indent[=N]              : indent width (default 0)
 
@@ -500,7 +505,7 @@ class Action(object):
             add("\n")
         add("Usage:\n")
         add("%s%s%s%s%s\n" % (" " * indent, script_name, action_str,
-                              " [options]" if options_doc else "",
+                              " [<options>]" if options_doc else "",
                               " "+self.argdef if self.argdef else ""))
         #; [!kb62s] includes help message of options.
         if options_doc:
